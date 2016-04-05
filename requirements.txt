@@ -3,3 +3,4 @@ falcon
 gevent
 gunicorn
 psycopg2
+sqlalchemy

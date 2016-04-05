@@ -22,10 +22,10 @@ class TetraAPI(falcon.API):
 
     def __init__(self):
         super(TetraAPI, self).__init__()
-        result = ResultResource()
         results = ResultsResource()
-        self.add_route('/result', result)
+        result = ResultResource()
         self.add_route('/results', results)
+        self.add_route('/results/{result_id}', result)
 
 
 application = TetraAPI()

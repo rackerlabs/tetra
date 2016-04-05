@@ -13,17 +13,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import uuid
-
+from tetra.data import sql
 from tetra.data.models.base import BaseModel
 
 
 class Result(BaseModel):
 
-    def __init__(self, test_name, timestamp, result, result_message,
-                 extra_data):
-        self.id = uuid.uuid4()
+    TABLE = sql.results_table
+
+    def __init__(self, test_name, timestamp, result, id=None,
+                 test_suite=None, test_suite_id=None,
+                 result_message=None, extra_data=None):
+        if id:
+            self.id = id
         self.test_name = test_name
+        self.test_suite = test_suite
+        self.test_suite_id = test_suite_id
         self.timestamp = timestamp
         self.result = result
         self.result_message = result_message

@@ -16,28 +16,40 @@ limitations under the License.
 import falcon
 import json
 
-from tetra.data.database_client import DatabaseClient
 from tetra.data.models.result import Result
+
+
+def make_error_body(msg):
+    return json.dumps({'error': msg})
 
 
 class ResultsResource(object):
 
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_200
+        resp.body = json.dumps(Result.get_all())
 
     def on_post(self, req, resp):
         resp.status = falcon.HTTP_201
         data = req.stream.read()
         data_dict = json.loads(data)
         result = Result.from_dict(data_dict)
-        client = DatabaseClient()
-        client.save(resource=result)
+        created_result = Result.create(resource=result)
+        resp.body = json.dumps(created_result.to_dict())
 
 
 class ResultResource(object):
 
-    def on_get(self, req, resp):
+    def on_get(self, req, resp, result_id):
         resp.status = falcon.HTTP_200
+        try:
+            result = Result.get(resource_id=result_id)
+            resp.content_type = 'application/json'
+            resp.body = json.dumps(result.to_dict())
+        except Exception as e:
+            resp.status = falcon.HTTP_404
+            resp.body = make_error_body(str(e))
 
-    def on_delete(self, req, resp):
+    def on_delete(self, req, resp, result_id):
         resp.status = falcon.HTTP_204
+        Result.delete(resource_id=result_id)

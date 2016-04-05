@@ -13,32 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from abc import ABCMeta, abstractmethod
+import logging
+
+from tetra.data.postgres_client import PostgresClient
+
+LOG = logging.getLogger(__name__)
+
+_db_handler = PostgresClient()
+
+try:
+    _db_handler.connect()
+except Exception as e:
+    LOG.error("Problem connecting to database: {0}".format(e))
 
 
-class DatabaseClient(object):
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def connect(self):
-        pass
-
-    @abstractmethod
-    def create(self, resource):
-        pass
-
-    @abstractmethod
-    def update(self, resource_id, resource):
-        pass
-
-    @abstractmethod
-    def delete(self, resource_id, resource_class):
-        pass
-
-    @abstractmethod
-    def get(self, resource_id, resource_class):
-        pass
-
-    @abstractmethod
-    def get_all(self, resource_class):
-        pass
+def get_handler():
+    return _db_handler
