@@ -21,9 +21,9 @@ class Result(BaseModel):
 
     TABLE = sql.results_table
 
-    def __init__(self, test_name, timestamp, result, id=None,
-                 test_suite=None, test_suite_id=None,
-                 result_message=None, extra_data=None):
+    def __init__(self, test_name, timestamp, result, id=None, test_suite=None,
+                 test_suite_id=None, result_message=None, region=None,
+                 environment=None, extra_data=None):
         if id:
             self.id = id
         self.test_name = test_name
@@ -32,4 +32,6 @@ class Result(BaseModel):
         self.timestamp = timestamp
         self.result = result
         self.result_message = result_message
+        self.region = region
+        self.environment = environment
         self.extra_data = extra_data

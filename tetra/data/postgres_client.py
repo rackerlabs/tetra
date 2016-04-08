@@ -13,16 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from tetra.config import get_config
 from tetra.data.database_client import DatabaseClient
 from tetra.data.sql import db_connect
 
+conf = get_config()
 
 DATABASE = {
     'drivername': 'postgres',
-    'host': 'localhost',
-    'port': '5432',
-    'username': 'postgres',
-    'database': 'tetra-db'
+    'host': conf.sqlalchemy.host,
+    'port': conf.sqlalchemy.port,
+    'username': conf.sqlalchemy.username,
+    'database': conf.sqlalchemy.database
 }
 
 

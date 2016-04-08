@@ -31,6 +31,8 @@ results_table = Table(
     Column('timestamp', Integer, nullable=False),
     Column('result', String(256), nullable=False),
     Column('result_message', String(2048), nullable=True),
+    Column('region', String(256), nullable=True),
+    Column('environment', String(256), nullable=True),
     Column('extra_data', String(512), nullable=True)
 )
 
