@@ -4,7 +4,7 @@
 
 # Using the makefile
 
-The makfile contains a bunch of commands for managing a docker container for
+The makefile contains a bunch of commands for managing a docker container for
 the database. In non-linux places, it uses docker-machine to run docker in a
 vm.
 
