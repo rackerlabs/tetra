@@ -4,10 +4,11 @@
 
 # Using the makefile
 
-Run a `make help` to see the makefile targets.
+The makfile contains a bunch of commands for managing a docker container for
+the database. In non-linux places, it uses docker-machine to run docker in a
+vm.
 
-It contains a bunch of commands for managing a docker container for the
-database. In non-linux places, it uses docker-machine to run docker in a vm.
+Run a `make help` to see the makefile targets.
 
 To build and run the image/container
 
@@ -18,6 +19,6 @@ To see the ip and port of your postgres server:
 
     $ make docker-port
 
-To get a postgres shell into the container:
+To get a postgres shell in the container:
 
     $ make docker-postgres-shell
