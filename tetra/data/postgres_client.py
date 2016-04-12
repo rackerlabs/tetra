@@ -24,6 +24,7 @@ DATABASE = {
     'host': conf.sqlalchemy.host,
     'port': conf.sqlalchemy.port,
     'username': conf.sqlalchemy.username,
+    'password': conf.sqlalchemy.password,
     'database': conf.sqlalchemy.database
 }
 
