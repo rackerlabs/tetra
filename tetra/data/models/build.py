@@ -19,22 +19,13 @@ from tetra.data import sql
 from tetra.data.models.base import BaseModel
 
 
-class Result(BaseModel):
+class Build(BaseModel):
 
-    TABLE = sql.results_table
+    TABLE = sql.builds_table
 
-    def __init__(self, test_name, result, project_id, suite_id, build_id,
-                 id=None, timestamp=None,  result_message=None, region=None,
-                 environment=None, extra_data=None):
+    def __init__(self, project_id, suite_id, id=None, timestamp=None):
         if id:
             self.id = id
-        self.test_name = test_name
         self.project_id = project_id
         self.suite_id = suite_id
-        self.build_id = build_id
         self.timestamp = timestamp or time.time()
-        self.result = result
-        self.result_message = result_message
-        self.region = region
-        self.environment = environment
-        self.extra_data = extra_data
