@@ -23,7 +23,7 @@ class Result(BaseModel):
 
     TABLE = sql.results_table
 
-    def __init__(self, test_name, result, project_id, suite_id, build_id,
+    def __init__(self, test_name, result, project_id, suite_id, build_num,
                  id=None, timestamp=None,  result_message=None, region=None,
                  environment=None, extra_data=None):
         if id:
@@ -31,7 +31,7 @@ class Result(BaseModel):
         self.test_name = test_name
         self.project_id = project_id
         self.suite_id = suite_id
-        self.build_id = build_id
+        self.build_num = build_num
         self.timestamp = timestamp or time.time()
         self.result = result
         self.result_message = result_message

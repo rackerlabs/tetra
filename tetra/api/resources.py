@@ -58,6 +58,7 @@ class SuitesResource(object):
         created_result = Suite.create(resource=suite)
         resp.body = json.dumps(created_result.to_dict())
 
+
 class SuiteResource(object):
     ROUTE = "/{project_id}/suites/{suite_id}"
 
@@ -85,7 +86,7 @@ class BuildResource(object):
     ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_num}"
 
 
-class ResultsResource(object):
+class BuildResultsResource(object):
     ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_num}/results"
 
     def on_get(self, req, resp, project_id, suite_id, build_num):
@@ -106,8 +107,8 @@ class ResultsResource(object):
         resp.body = json.dumps(created_result.to_dict())
 
 
-class ResultResource(object):
-    ROUTE = ("/{project_id}/suites/{suite_id}/builds/{build_id}"
+class BuildResultResource(object):
+    ROUTE = ("/{project_id}/suites/{suite_id}/builds/{build_num}"
              "/results/{result_id}")
 
     def on_get(self, req, resp, result_id):
@@ -123,3 +124,22 @@ class ResultResource(object):
     def on_delete(self, req, resp, result_id):
         resp.status = falcon.HTTP_204
         Result.delete(resource_id=result_id)
+
+
+class ResultsResource(object):
+    ROUTE = "/{project_id}/suites/{suite_id}/results"
+
+    def on_get(self, req, resp, project_id, suite_id):
+        resp.status = falcon.HTTP_200
+        resp.body = json.dumps(Result.get_all(project_id=project_id,
+                                              suite_id=suite_id))
+
+    def on_post(self, req, resp, project_id, suite_id):
+        resp.status = falcon.HTTP_201
+        data = req.stream.read()
+        data_dict = json.loads(data)
+        data_dict['project_id'] = project_id
+        data_dict['suite_id'] = suite_id
+        result = Result.from_dict(data_dict)
+        created_result = Result.create(resource=result)
+        resp.body = json.dumps(created_result.to_dict())
