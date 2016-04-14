@@ -15,11 +15,17 @@ limitations under the License.
 """
 import logging
 
+from tetra.config import get_config
 from tetra.data.postgres_client import PostgresClient
 
 LOG = logging.getLogger(__name__)
+conf = get_config()
 
-_db_handler = PostgresClient()
+handlers = {
+    'postgres': PostgresClient()
+}
+
+_db_handler = handlers.get(conf.sqlalchemy.engine)
 
 try:
     _db_handler.connect()
