@@ -38,3 +38,39 @@ class Result(BaseModel):
         self.region = region
         self.environment = environment
         self.extra_data = extra_data
+
+
+class Results(BaseModel):
+
+    def __init__(self, results):
+        self.results = results or []
+        total_results = len(results)
+        total_failures = 0
+        total_errors = 0
+        total_skipped = 0
+        total_passed = 0
+
+        for result in results:
+            if result.get("result").lower() == "failure":
+                total_failures += 1
+            elif result.get("result").lower() == "error":
+                total_errors += 1
+            elif result.get("result").lower() == "skipped":
+                total_skipped += 1
+            else:
+                total_passed += 1
+
+        success_rate = 0
+        if total_results > 0:
+            success_rate = (total_passed / float(total_results - total_skipped)
+                            * 100)
+            success_rate = float("{0:.1f}".format(success_rate))
+
+        self.metadata = {
+            "total_results": total_results,
+            "total_passed": total_passed,
+            "total_failures": total_failures,
+            "total_errors": total_errors,
+            "total_skipped": total_skipped,
+            "success_rate": success_rate
+        }
