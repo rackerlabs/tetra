@@ -17,6 +17,7 @@ from tetra.data.db_handler import get_handler
 
 
 class BaseModel(object):
+    TABLE = None
 
     @classmethod
     def from_dict(cls, data):
@@ -36,9 +37,18 @@ class BaseModel(object):
         return handler.get(resource_id=resource_id, resource_class=cls)
 
     @classmethod
-    def get_all(cls, handler=None):
+    def get_all(cls, handler=None, **kwargs):
         handler = handler or get_handler()
-        return handler.get_all(resource_class=cls)
+        query = None
+        and_clause = None
+        for key, value in kwargs.items():
+            if and_clause is None:
+                and_clause = (getattr(cls.TABLE.c, key) == value)
+            else:
+                and_clause &= (getattr(cls.TABLE.c, key) == value)
+        if and_clause is not None:
+            query = cls.TABLE.select().where(and_clause)
+        return handler.get_all(resource_class=cls, query=query)
 
     @classmethod
     def delete(cls, resource_id, handler=None):

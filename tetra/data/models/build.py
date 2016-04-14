@@ -32,11 +32,3 @@ class Build(BaseModel):
         self.suite_id = suite_id
         self.build_num = build_num
         self.timestamp = timestamp or time.time()
-
-    @classmethod
-    def get_all(cls, project_id=None, suite_id=None, handler=None):
-        handler = handler or get_handler()
-        query = cls.TABLE.select().where(
-            (cls.TABLE.c.project_id == project_id)
-            & (cls.TABLE.c.suite_id == suite_id))
-        return handler.get_all(resource_class=cls, query=query)
