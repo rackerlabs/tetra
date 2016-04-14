@@ -16,6 +16,7 @@ limitations under the License.
 import time
 
 from tetra.data import sql
+from tetra.data.db_handler import get_handler
 from tetra.data.models.base import BaseModel
 
 
@@ -23,9 +24,19 @@ class Build(BaseModel):
 
     TABLE = sql.builds_table
 
-    def __init__(self, project_id, suite_id, id=None, timestamp=None):
+    def __init__(self, project_id, suite_id, build_num,
+                 id=None, timestamp=None):
         if id:
             self.id = id
         self.project_id = project_id
         self.suite_id = suite_id
+        self.build_num = build_num
         self.timestamp = timestamp or time.time()
+
+    @classmethod
+    def get_all(cls, project_id=None, suite_id=None, handler=None):
+        handler = handler or get_handler()
+        query = cls.TABLE.select().where(
+            (cls.TABLE.c.project_id == project_id)
+            & (cls.TABLE.c.suite_id == suite_id))
+        return handler.get_all(resource_class=cls, query=query)

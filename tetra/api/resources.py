@@ -16,29 +16,99 @@ limitations under the License.
 import falcon
 import json
 
+from tetra.data.models.build import Build
+from tetra.data.models.project import Project
 from tetra.data.models.result import Result
+from tetra.data.models.suite import Suite
 
 
 def make_error_body(msg):
     return json.dumps({'error': msg})
 
 
-class ResultsResource(object):
+class ProjectsResource(object):
+    ROUTE = "/projects"
 
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_200
-        resp.body = json.dumps(Result.get_all())
+        resp.body = json.dumps(Project.get_all())
 
     def on_post(self, req, resp):
         resp.status = falcon.HTTP_201
         data = req.stream.read()
         data_dict = json.loads(data)
+        project = Project.from_dict(data_dict)
+        created_result = Project.create(resource=project)
+        resp.body = json.dumps(created_result.to_dict())
+
+
+class SuitesResource(object):
+    ROUTE = "/{project_id}/suites/"
+
+    def on_get(self, req, resp, project_id):
+        resp.status = falcon.HTTP_200
+        resp.body = json.dumps(Suite.get_all(project_id=project_id))
+
+    def on_post(self, req, resp, project_id):
+        resp.status = falcon.HTTP_201
+        data = req.stream.read()
+        data_dict = json.loads(data)
+        data_dict['project_id'] = project_id
+        suite = Suite.from_dict(data_dict)
+        created_result = Suite.create(resource=suite)
+        resp.body = json.dumps(created_result.to_dict())
+
+class SuiteResource(object):
+    ROUTE = "/{project_id}/suites/{suite_id}"
+
+
+class BuildsResource(object):
+    ROUTE = "/{project_id}/suites/{suite_id}/builds"
+
+    def on_get(self, req, resp, project_id, suite_id):
+        resp.status = falcon.HTTP_200
+        resp.body = json.dumps(Build.get_all(project_id=project_id,
+                                             suite_id=suite_id))
+
+    def on_post(self, req, resp, project_id, suite_id):
+        resp.status = falcon.HTTP_201
+        data = req.stream.read()
+        data_dict = json.loads(data)
+        data_dict['project_id'] = project_id
+        data_dict['suite_id'] = suite_id
+        build = Build.from_dict(data_dict)
+        created_result = Build.create(resource=build)
+        resp.body = json.dumps(created_result.to_dict())
+
+
+class BuildResource(object):
+    ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_num}"
+
+
+class ResultsResource(object):
+    ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_num}/results"
+
+    def on_get(self, req, resp, project_id, suite_id, build_num):
+        resp.status = falcon.HTTP_200
+        resp.body = json.dumps(Result.get_all(project_id=project_id,
+                                              suite_id=suite_id,
+                                              build_num=build_num))
+
+    def on_post(self, req, resp, project_id, suite_id, build_num):
+        resp.status = falcon.HTTP_201
+        data = req.stream.read()
+        data_dict = json.loads(data)
+        data_dict['project_id'] = project_id
+        data_dict['suite_id'] = suite_id
+        data_dict['build_num'] = build_num
         result = Result.from_dict(data_dict)
         created_result = Result.create(resource=result)
         resp.body = json.dumps(created_result.to_dict())
 
 
 class ResultResource(object):
+    ROUTE = ("/{project_id}/suites/{suite_id}/builds/{build_id}"
+             "/results/{result_id}")
 
     def on_get(self, req, resp, result_id):
         resp.status = falcon.HTTP_200

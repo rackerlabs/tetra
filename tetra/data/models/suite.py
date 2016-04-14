@@ -27,3 +27,10 @@ class Suite(BaseModel):
         self.project_id = project_id
         self.name = name
         self.description = description
+
+    @classmethod
+    def get_all(cls, project_id=None, handler=None):
+        handler = handler or get_handler()
+        query = cls.TABLE.select().where(cls.TABLE.c.project_id == project_id)
+        return handler.get_all(resource_class=cls, query=query)
+

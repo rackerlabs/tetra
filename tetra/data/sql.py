@@ -45,7 +45,7 @@ builds_table = Table(
            autoincrement=True),
     Column('project_id', ForeignKey(projects_table.c.id), nullable=False),
     Column('suite_id', ForeignKey(suites_table.c.id), nullable=False),
-    Column('build_id', Integer, nullable=False),
+    Column('build_num', Integer, nullable=False),
     Column('timestamp', Integer, nullable=False)
 )
 results_table = Table(
@@ -54,7 +54,7 @@ results_table = Table(
            autoincrement=True),
     Column('project_id', ForeignKey(projects_table.c.id), nullable=False),
     Column('suite_id', ForeignKey(suites_table.c.id), nullable=False),
-    Column('build_id', ForeignKey(builds_table.c.id), nullable=False),
+    Column('build_num', ForeignKey(builds_table.c.build_num), nullable=False),
     Column('test_name', String(256), nullable=False),
     Column('timestamp', Integer, nullable=False),
     Column('result', String(256), nullable=False),

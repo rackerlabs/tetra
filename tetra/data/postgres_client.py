@@ -65,8 +65,10 @@ class PostgresClient(DatabaseClient):
         result.close()
         return resource_class.from_dict(data)
 
-    def get_all(self, resource_class):
-        query = resource_class.TABLE.select()
+    def get_all(self, resource_class, query=None):
+        if query is None:
+            query = resource_class.TABLE.select()
+
         result = self.engine.execute(query)
         rows = result.fetchall()
         data = []
