@@ -32,7 +32,7 @@ class BaseModel(object):
         return handler.create(resource)
 
     @classmethod
-    def get(cls, resource_id, handler=None):
+    def get(cls, resource_id, handler=None, **kwargs):
         handler = handler or get_handler()
         return handler.get(resource_id=resource_id, resource_class=cls)
 

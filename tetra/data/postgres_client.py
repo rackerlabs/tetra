@@ -58,8 +58,7 @@ class PostgresClient(DatabaseClient):
         query = table.select().where(table.c.id == int(resource_id))
         result = self.engine.execute(query)
         if result.rowcount == 0:
-            raise Exception("{0} {1} not found.".format(
-                resource_class.__name__, resource_id))
+            return
         row = result.fetchone()
         data = {key: value for key, value in zip(result.keys(), row)}
         result.close()

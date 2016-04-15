@@ -44,7 +44,7 @@ class Result(BaseModel):
 
     @classmethod
     def get_all(cls, handler=None, **kwargs):
-        handler = get_handler()
+        handler = handler or get_handler()
         results = super(cls, Result).get_all(handler=None, **kwargs)
 
         query = select(

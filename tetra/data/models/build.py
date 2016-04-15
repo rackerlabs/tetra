@@ -32,5 +32,4 @@ class Build(BaseModel):
         self.suite_id = suite_id
         self.build_num = build_num
         self.timestamp = timestamp or time.time()
-        self.total_results = len(results)
-        self.total_failures = None
+        self.results = results

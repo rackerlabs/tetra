@@ -17,7 +17,7 @@ import falcon
 
 from api.resources import (ProjectsResource, BuildResultsResource,
                            BuildResultResource, SuitesResource, BuildsResource,
-                           ResultsResource)
+                           ResultsResource, SuiteResource)
 
 
 class TetraAPI(falcon.API):
@@ -29,8 +29,10 @@ class TetraAPI(falcon.API):
         build_result = BuildResultResource()
         projects = ProjectsResource()
         suites = SuitesResource()
+        suite = SuiteResource()
         builds = BuildsResource()
         self.add_route(projects.ROUTE, projects)
+        self.add_route(suite.ROUTE, suite)
         self.add_route(suites.ROUTE, suites)
         self.add_route(builds.ROUTE, builds)
         self.add_route(results.ROUTE, results)
