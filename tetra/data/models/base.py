@@ -37,15 +37,20 @@ class BaseModel(object):
         return handler.get(resource_id=resource_id, resource_class=cls)
 
     @classmethod
-    def get_all(cls, handler=None, **kwargs):
-        handler = handler or get_handler()
-        query = None
+    def _and_clause(cls, **kwargs):
         and_clause = None
         for key, value in kwargs.items():
             if and_clause is None:
                 and_clause = (getattr(cls.TABLE.c, key) == value)
             else:
                 and_clause &= (getattr(cls.TABLE.c, key) == value)
+        return and_clause
+
+    @classmethod
+    def get_all(cls, handler=None, **kwargs):
+        handler = handler or get_handler()
+        query = None
+        and_clause = cls._and_clause(**kwargs)
         if and_clause is not None:
             query = cls.TABLE.select().where(and_clause)
         return handler.get_all(resource_class=cls, query=query)

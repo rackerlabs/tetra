@@ -66,9 +66,9 @@ results_table = Table(
     Column('environment', String(256), nullable=True),
     Column('extra_data', String(512), nullable=True),
 
-    Index('build_index', 'project_id', 'suite_id', 'build_num')
+    Index('build_index', 'project_id', 'suite_id', 'build_num'),
+    Index('result_index', 'project_id', 'suite_id', 'build_num', 'result')
 )
-
 
 
 def db_connect(database_dict):

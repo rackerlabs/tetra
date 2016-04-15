@@ -15,7 +15,10 @@ limitations under the License.
 """
 import time
 
+from sqlalchemy.sql import func, select
+
 from tetra.data import sql
+from tetra.data.db_handler import get_handler
 from tetra.data.models.base import BaseModel
 
 
@@ -39,26 +42,31 @@ class Result(BaseModel):
         self.environment = environment
         self.extra_data = extra_data
 
+    @classmethod
+    def get_all(cls, handler=None, **kwargs):
+        handler = get_handler()
+        results = super(cls, Result).get_all(handler=None, **kwargs)
 
-class Results(BaseModel):
+        query = select(
+            [cls.TABLE.c.result, func.count(cls.TABLE.c.result).label("count")]
+        ).where(cls._and_clause(**kwargs)).group_by(cls.TABLE.c.result)
+        count_results = handler.get_all(resource_class=Result, query=query)
 
-    def __init__(self, results):
-        self.results = results or []
         total_results = len(results)
         total_failures = 0
         total_errors = 0
         total_skipped = 0
         total_passed = 0
 
-        for result in results:
+        for result in count_results:
             if result.get("result").lower() == "failure":
-                total_failures += 1
+                total_failures += result.get("count")
             elif result.get("result").lower() == "error":
-                total_errors += 1
+                total_errors += result.get("count")
             elif result.get("result").lower() == "skipped":
-                total_skipped += 1
+                total_skipped += result.get("count")
             else:
-                total_passed += 1
+                total_passed += result.get("count")
 
         success_rate = 0
         if total_results > 0:
@@ -66,7 +74,7 @@ class Results(BaseModel):
                             * 100)
             success_rate = float("{0:.1f}".format(success_rate))
 
-        self.metadata = {
+        metadata = {
             "total_results": total_results,
             "total_passed": total_passed,
             "total_failures": total_failures,
@@ -74,3 +82,10 @@ class Results(BaseModel):
             "total_skipped": total_skipped,
             "success_rate": success_rate
         }
+
+        results_dict = {
+            "results": results,
+            "metadata": metadata
+        }
+
+        return results_dict

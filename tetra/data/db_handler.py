@@ -27,10 +27,7 @@ handlers = {
 
 _db_handler = handlers.get(conf.sqlalchemy.engine)
 
-try:
-    _db_handler.connect()
-except Exception as e:
-    LOG.error("Problem connecting to database: {0}".format(e))
+_db_handler.connect()
 
 
 def get_handler():

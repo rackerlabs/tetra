@@ -18,7 +18,7 @@ import json
 
 from tetra.data.models.build import Build
 from tetra.data.models.project import Project
-from tetra.data.models.result import Result, Results
+from tetra.data.models.result import Result
 from tetra.data.models.suite import Suite
 
 
@@ -98,8 +98,7 @@ class BuildResultsResource(object):
         results = Result.get_all(project_id=project_id,
                                  suite_id=suite_id,
                                  build_num=build_num)
-        full_results = Results(results=results).to_dict()
-        resp.body = json.dumps(full_results)
+        resp.body = json.dumps(results)
 
     def on_post(self, req, resp, project_id, suite_id, build_num):
         resp.status = falcon.HTTP_201
@@ -137,8 +136,9 @@ class ResultsResource(object):
 
     def on_get(self, req, resp, project_id, suite_id):
         resp.status = falcon.HTTP_200
-        resp.body = json.dumps(Result.get_all(project_id=project_id,
-                                              suite_id=suite_id))
+        results = Result.get_all(project_id=project_id,
+                                 suite_id=suite_id)
+        resp.body = json.dumps(results)
 
     def on_post(self, req, resp, project_id, suite_id):
         resp.status = falcon.HTTP_201
