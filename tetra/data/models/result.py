@@ -28,7 +28,7 @@ class Result(BaseModel):
 
     def __init__(self, test_name, result, project_id, suite_id, build_num,
                  id=None, timestamp=None,  result_message=None, region=None,
-                 environment=None, extra_data=None):
+                 environment=None, build_url=None, extra_data=None):
         if id:
             self.id = id
         self.test_name = test_name
@@ -43,6 +43,7 @@ class Result(BaseModel):
         self.result_message = result_message
         self.region = region
         self.environment = environment
+        self.build_url = build_url
         self.extra_data = extra_data
 
     @classmethod

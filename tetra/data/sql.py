@@ -65,6 +65,7 @@ results_table = Table(
     Column('result_message', String(8192), nullable=True),
     Column('region', String(256), nullable=True),
     Column('environment', String(256), nullable=True),
+    Column('build_url', String(256), nullable=True),
     Column('extra_data', String(512), nullable=True),
 
     Index('result_build_index', 'project_id', 'suite_id', 'build_num'),
