@@ -37,6 +37,9 @@ class Result(BaseModel):
         self.build_num = build_num
         self.timestamp = timestamp or time.time()
         self.result = result
+        max_message = self.TABLE.c.result_message.type.length
+        if result_message and len(result_message) > max_message:
+            result_message = result_message[0:max_message]
         self.result_message = result_message
         self.region = region
         self.environment = environment
