@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 from sqlalchemy import Table, Column, MetaData, ForeignKey, Index
-from sqlalchemy import Integer, String
+from sqlalchemy import Integer, String, Text
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
@@ -62,7 +62,7 @@ results_table = Table(
     Column('test_name', String(256), nullable=False),
     Column('timestamp', Integer, nullable=False),
     Column('result', String(256), nullable=False),
-    Column('result_message', String(8192), nullable=True),
+    Column('result_message', Text, nullable=True),
     Column('region', String(256), nullable=True),
     Column('environment', String(256), nullable=True),
     Column('build_url', String(256), nullable=True),
