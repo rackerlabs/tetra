@@ -36,7 +36,9 @@ suites_table = Table(
            autoincrement=True),
     Column('project_id', ForeignKey(projects_table.c.id), nullable=False),
     Column('name', String(256), nullable=False),
-    Column('description', String(256), nullable=True)
+    Column('description', String(256), nullable=True),
+
+    Index('suite_index', 'project_id', 'id')
 )
 
 builds_table = Table(
@@ -68,7 +70,6 @@ results_table = Table(
     Column('build_url', String(256), nullable=True),
     Column('extra_data', String(512), nullable=True),
 
-    Index('result_build_index', 'project_id', 'suite_id', 'build_num'),
     Index('result_index', 'project_id', 'suite_id', 'build_num', 'result')
 )
 

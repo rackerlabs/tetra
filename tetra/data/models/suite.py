@@ -27,4 +27,3 @@ class Suite(BaseModel):
         self.project_id = project_id
         self.name = name
         self.description = description
-

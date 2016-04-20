@@ -16,7 +16,6 @@ limitations under the License.
 import time
 
 from tetra.data import sql
-from tetra.data.db_handler import get_handler
 from tetra.data.models.base import BaseModel
 
 
