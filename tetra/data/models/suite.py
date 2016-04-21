@@ -13,22 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import logging
-
-from tetra.config import get_config
-from tetra.data.postgres_client import PostgresClient
-
-LOG = logging.getLogger(__name__)
-conf = get_config()
-
-handlers = {
-    'postgres': PostgresClient()
-}
-
-_db_handler = handlers.get(conf.sqlalchemy.engine)
-
-_db_handler.connect()
+from tetra.data import sql
+from tetra.data.models.base import BaseModel
 
 
-def get_handler():
-    return _db_handler
+class Suite(BaseModel):
+
+    TABLE = sql.suites_table
+
+    def __init__(self, project_id, name, description=None, id=None):
+        if id:
+            self.id = id
+        self.project_id = project_id
+        self.name = name
+        self.description = description

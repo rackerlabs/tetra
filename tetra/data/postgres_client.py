@@ -58,15 +58,16 @@ class PostgresClient(DatabaseClient):
         query = table.select().where(table.c.id == int(resource_id))
         result = self.engine.execute(query)
         if result.rowcount == 0:
-            raise Exception("{0} {1} not found.".format(
-                resource_class.__name__, resource_id))
+            return
         row = result.fetchone()
         data = {key: value for key, value in zip(result.keys(), row)}
         result.close()
         return resource_class.from_dict(data)
 
-    def get_all(self, resource_class):
-        query = resource_class.TABLE.select()
+    def get_all(self, resource_class, query=None):
+        if query is None:
+            query = resource_class.TABLE.select()
+
         result = self.engine.execute(query)
         rows = result.fetchall()
         data = []

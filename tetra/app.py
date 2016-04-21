@@ -15,7 +15,9 @@ limitations under the License.
 """
 import falcon
 
-from api.resources import ResultsResource, ResultResource
+from api.resources import (ProjectsResource, BuildResultsResource,
+                           BuildResultResource, SuitesResource, BuildsResource,
+                           ResultsResource, SuiteResource)
 
 
 class TetraAPI(falcon.API):
@@ -23,9 +25,19 @@ class TetraAPI(falcon.API):
     def __init__(self):
         super(TetraAPI, self).__init__()
         results = ResultsResource()
-        result = ResultResource()
-        self.add_route('/results', results)
-        self.add_route('/results/{result_id}', result)
+        build_results = BuildResultsResource()
+        build_result = BuildResultResource()
+        projects = ProjectsResource()
+        suites = SuitesResource()
+        suite = SuiteResource()
+        builds = BuildsResource()
+        self.add_route(projects.ROUTE, projects)
+        self.add_route(suite.ROUTE, suite)
+        self.add_route(suites.ROUTE, suites)
+        self.add_route(builds.ROUTE, builds)
+        self.add_route(results.ROUTE, results)
+        self.add_route(build_results.ROUTE, build_results)
+        self.add_route(build_result.ROUTE, build_result)
 
 
 application = TetraAPI()
