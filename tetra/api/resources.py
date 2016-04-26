@@ -88,6 +88,20 @@ class BuildsResource(Resources):
     ROUTE = "/{project_id}/suites/{suite_id}/builds"
     RESOURCE_CLASS = Build
 
+    def on_get(self, req, resp, **kwargs):
+        resp.status = falcon.HTTP_200
+        kwargs.update(req.params)
+        builds = self.RESOURCE_CLASS.get_all(**kwargs)
+
+        for build in builds:
+            results = Result.get_all(project_id=build['project_id'],
+                                     suite_id=build['suite_id'],
+                                     build_num=build['build_num'])
+            build['results'] = results.get("metadata")
+
+        resp.body = json.dumps(builds)
+
+
     def on_post(self, req, resp, **kwargs):
         resp.status = falcon.HTTP_201
         data = req.stream.read()
@@ -96,10 +110,6 @@ class BuildsResource(Resources):
         suite_id = kwargs.get("suite_id")
         data_dict['project_id'] = project_id
         data_dict['suite_id'] = suite_id
-        results = Result.get_all(project_id=project_id,
-                                 suite_id=suite_id,
-                                 build_num=data_dict.get("build_num"))
-        data_dict['results'] = json.dumps(results.get("metadata"))
         build = Build.from_dict(data_dict)
         created_result = Build.create(resource=build)
         resp.body = json.dumps(created_result.to_dict())

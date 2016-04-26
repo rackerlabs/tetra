@@ -49,7 +49,6 @@ builds_table = Table(
     Column('suite_id', ForeignKey(suites_table.c.id), nullable=False),
     Column('build_num', Integer, nullable=False),
     Column('timestamp', Integer, nullable=False),
-    Column('results', String(256), nullable=False),
 
     Index('build_index', 'project_id', 'suite_id', 'build_num')
 )

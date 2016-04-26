@@ -24,11 +24,10 @@ class Build(BaseModel):
     TABLE = sql.builds_table
 
     def __init__(self, project_id, suite_id, build_num,
-                 id=None, timestamp=None, results=None):
+                 id=None, timestamp=None):
         if id:
             self.id = id
         self.project_id = project_id
         self.suite_id = suite_id
         self.build_num = build_num
         self.timestamp = timestamp or time.time()
-        self.results = results
