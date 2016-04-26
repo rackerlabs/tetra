@@ -101,7 +101,6 @@ class BuildsResource(Resources):
 
         resp.body = json.dumps(builds)
 
-
     def on_post(self, req, resp, **kwargs):
         resp.status = falcon.HTTP_201
         data = req.stream.read()
@@ -115,17 +114,19 @@ class BuildsResource(Resources):
         resp.body = json.dumps(created_result.to_dict())
 
 
-class BuildResource(object):
-    ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_num}"
+class BuildResource(Resource):
+    ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_id}"
+    RESOURCE_CLASS = Build
+    RESOURCE_ID_KEY = "build_id"
 
 
 class BuildResultsResource(Resources):
-    ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_num}/results"
+    ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_id}/results"
     RESOURCE_CLASS = Result
 
 
 class BuildResultResource(Resource):
-    ROUTE = ("/{project_id}/suites/{suite_id}/builds/{build_num}"
+    ROUTE = ("/{project_id}/suites/{suite_id}/builds/{build_id}"
              "/results/{result_id}")
     RESOURCE_CLASS = Result
     RESOURCE_ID_KEY = "result_id"
