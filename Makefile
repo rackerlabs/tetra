@@ -37,7 +37,7 @@ help:
 	@echo '  docker-postgres-shell      - start the postgres shell in your container'
 
 start:
-	gunicorn --bind 127.0.0.1:7374 tetra.app:application
+	gunicorn --reload --bind 127.0.0.1:7374 tetra.app:application
 
 docker-build: docker-machine-create
 	$(WITH_DOCKER_ENV) && docker build -t $(DOCKER_TAG) .
