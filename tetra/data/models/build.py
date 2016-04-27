@@ -26,8 +26,8 @@ class Build(BaseModel):
     def __init__(self, project_id, suite_id, build_num,
                  id=None, timestamp=None):
         if id:
-            self.id = id
-        self.project_id = project_id
-        self.suite_id = suite_id
-        self.build_num = build_num
+            self.id = int(id)
+        self.project_id = int(project_id)
+        self.suite_id = int(suite_id)
+        self.build_num = int(build_num)
         self.timestamp = timestamp or time.time()

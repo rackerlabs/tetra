@@ -39,6 +39,9 @@ help:
 start:
 	gunicorn --reload --bind 127.0.0.1:7374 tetra.app:application
 
+test:
+	py.test -v ./tests
+
 docker-build: docker-machine-create
 	$(WITH_DOCKER_ENV) && docker build -t $(DOCKER_TAG) .
 
