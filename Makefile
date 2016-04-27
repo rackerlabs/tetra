@@ -21,6 +21,8 @@ endif
 help:
 	@echo 'Api commands:'
 	@echo '  start                      - start the tetra api, running locally'
+	@echo 'Test commands:'
+	@echo '  test                       - run tests (you must first write tetra-test.conf)'
 	@echo 'Docker commands:'
 	@echo '  docker-build               - build the postgres docker image ($(DOCKER_TAG))'
 	@echo '  docker-run                 - run the postgres docker container ($(DOCKER_TAG))'

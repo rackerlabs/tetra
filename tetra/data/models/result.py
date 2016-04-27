@@ -71,8 +71,8 @@ class Result(BaseModel):
 
         success_rate = 0
         if total_results > 0:
-            success_rate = (total_passed / float(total_results - total_skipped)
-                            * 100)
+            success_rate = (total_passed /
+                            float(total_results - total_skipped) * 100)
             success_rate = float("{0:.2f}".format(success_rate))
 
         metadata = {

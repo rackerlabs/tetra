@@ -22,6 +22,7 @@ _CONFIG_FILE_LOCATIONS = (
     '/etc/tetra/tetra.conf',
 )
 
+
 def _find_config_file(locations):
     for path in locations:
         if os.path.exists(path):
