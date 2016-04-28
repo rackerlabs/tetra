@@ -1,11 +1,11 @@
 from tests.base import BaseTetraTest
 
-
-class TestSuiteResults(BaseTetraTest):
+class BaseSuiteResultTest(BaseTetraTest):
 
     def setUp(self):
-        super(TestSuiteResults, self).setUp()
+        super(BaseSuiteResultTest, self).setUp()
 
+        # setup a project, suite, and build
         resp = self._create_project()
         self.project_id = resp.json()['id']
 
@@ -15,6 +15,12 @@ class TestSuiteResults(BaseTetraTest):
         resp = self._create_build(self.project_id, self.suite_id)
         self.build_id = resp.json()['id']
         self.build_num = resp.json()['build_num']
+
+
+class TestSuiteResults(BaseSuiteResultTest):
+
+    def setUp(self):
+        super(TestSuiteResults, self).setUp()
 
         self.test_name = "test-name"
         self.result = "passed"
@@ -78,3 +84,58 @@ class TestSuiteResults(BaseTetraTest):
         resp = self.client.get_suite_result(self.project_id, self.suite_id,
                                       self.result_id)
         self.assertEqual(resp.status_code, 404)
+
+
+class TestSuiteResultsPagination(BaseSuiteResultTest):
+
+    def setUp(self):
+        super(TestSuiteResultsPagination, self).setUp()
+
+        # create 4 results - two passes and two fails.
+        self.result_ids = []
+        for i in range(4):
+            test_name = "test%s" % i
+            result = "passed" if i % 2 == 0 else "failed"
+            resp = self._create_suite_result(
+                self.project_id, self.suite_id, test_name=test_name,
+                result=result, build_num=self.build_num,
+            )
+            self.result_ids.append(resp.json()['id'])
+
+        self.n_results = len(self.result_ids)
+
+    def test_list_suite_results_limit(self):
+        # check that all results are returned with no limit
+        resp = self.client.list_suite_results(self.project_id, self.suite_id)
+        self.assertEqual(resp.status_code, 200)
+
+        results = resp.json()['results']
+        metadata = resp.json()['metadata']
+        self.assertEqual(len(results), self.n_results)
+        self.assertEqual(metadata['total_results'], self.n_results)
+
+        # check limit <= number of results
+        for limit in range(self.n_results + 1):
+            resp = self.client.list_suite_results(
+                self.project_id, self.suite_id, params={'limit': limit},
+            )
+            results = resp.json()['results']
+            metadata = resp.json()['metadata']
+            self.assertEqual(len(results), limit)
+
+            # the metadata shouldn't change based on the limit
+            self.assertEqual(metadata['total_results'], self.n_results)
+            self.assertEqual(metadata['total_passed'], self.n_results / 2)
+            self.assertEqual(metadata['total_failures'], self.n_results / 2)
+            self.assertEqual(metadata['total_skipped'], 0)
+            self.assertEqual(metadata['success_rate'], 50.00)
+
+        # check limit > number of results
+        for limit in range(self.n_results + 1, self.n_results + 4):
+            resp = self.client.list_suite_results(
+                self.project_id, self.suite_id, params={'limit': limit},
+            )
+            results = resp.json()['results']
+            metadata = resp.json()['metadata']
+            self.assertEqual(len(results), self.n_results)
+            self.assertEqual(metadata['total_results'], self.n_results)
