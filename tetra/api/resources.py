@@ -27,20 +27,6 @@ def make_error_body(msg):
     return json.dumps({'error': msg})
 
 
-def ignore_kwargs(*ignores):
-
-    def decorator(f):
-        @functools.wraps(f)
-        def wrapped(*args, **kwargs):
-            for ignore in ignores:
-                if ignore in kwargs:
-                    del kwargs[ignore]
-            return f(*args, **kwargs)
-        return wrapped
-
-    return decorator
-
-
 class Resources(object):
     RESOURCE_CLASS = None
 
@@ -139,12 +125,12 @@ class BuildResultsResource(Resources):
     ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_id}/results"
     RESOURCE_CLASS = Result
 
-    @ignore_kwargs("build_id")
-    def on_get(self, req, resp, **kwargs):
+    # a result is tied to a build via the build_num only, so we can ignore
+    # the build_id when listing or posting results for this route.
+    def on_get(self, req, resp, build_id, **kwargs):
         return super(BuildResultsResource, self).on_get(req, resp, **kwargs)
 
-    @ignore_kwargs("build_id")
-    def on_post(self, req, resp, **kwargs):
+    def on_post(self, req, resp, build_id, **kwargs):
         return super(BuildResultsResource, self).on_post(req, resp, **kwargs)
 
 
