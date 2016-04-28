@@ -50,10 +50,43 @@ class BaseTetraTest(unittest.TestCase):
         self.assertEqual(resp.json()['suite_id'], suite_id)
         return resp
 
-    def _create_result(self, project_id, suite_id, test_name, result,
-                       build_num, timestamp=None, region=None,
-                       environment=None, build_url=None, result_message=None,
-                       extra_data=None):
+    def _create_suite_result(self, project_id, suite_id, test_name, result,
+                             build_num, timestamp=None, region=None,
+                             environment=None, build_url=None,
+                             result_message=None, extra_data=None):
+        data = self._get_result_data(project_id, suite_id, test_name, result,
+                                     build_num, timestamp, region, environment,
+                                     build_url, result_message, extra_data)
+        resp = self.client.create_suite_result(project_id, suite_id, data)
+        self.assertEqual(resp.status_code, 201)
+        self.addCleanup(self.client.delete_suite_result, project_id, suite_id,
+                        resp.json()['id'])
+
+        self.assertEqual(resp.json()['project_id'], project_id)
+        self.assertEqual(resp.json()['suite_id'], suite_id)
+        return resp
+
+    def _create_build_result(self, project_id, suite_id, build_id, test_name,
+                             result, build_num, timestamp=None, region=None,
+                             environment=None, build_url=None,
+                             result_message=None, extra_data=None):
+        data = self._get_result_data(project_id, suite_id, test_name, result,
+                                     build_num, timestamp, region, environment,
+                                     build_url, result_message, extra_data)
+        resp = self.client.create_build_result(project_id, suite_id, build_id,
+                                               data)
+        self.assertEqual(resp.status_code, 201)
+        self.addCleanup(self.client.delete_build_result, project_id, suite_id,
+                        build_id, resp.json()['id'])
+
+        self.assertEqual(resp.json()['project_id'], project_id)
+        self.assertEqual(resp.json()['suite_id'], suite_id)
+        return resp
+
+    def _get_result_data(self, project_id, suite_id, test_name, result,
+                         build_num, timestamp=None, region=None,
+                         environment=None, build_url=None,
+                         result_message=None, extra_data=None):
         data = {
             'test_name': test_name or "name of the test!",
             'result': result or random.choice(['passed', 'failed']),
@@ -66,13 +99,4 @@ class BaseTetraTest(unittest.TestCase):
             'extra_data': extra_data,
         }
         # remove all the none values
-        data = {k: v for k, v in data.items() if v is not None}
-
-        resp = self.client.create_result(project_id, suite_id, data)
-        self.assertEqual(resp.status_code, 201)
-        self.addCleanup(self.client.delete_result, project_id, suite_id,
-                        resp.json()['id'])
-
-        self.assertEqual(resp.json()['project_id'], project_id)
-        self.assertEqual(resp.json()['suite_id'], suite_id)
-        return resp
+        return {k: v for k, v in data.items() if v is not None}

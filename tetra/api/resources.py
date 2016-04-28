@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import functools
 import falcon
 import json
 
@@ -24,6 +25,20 @@ from tetra.data.models.suite import Suite
 
 def make_error_body(msg):
     return json.dumps({'error': msg})
+
+
+def ignore_kwargs(*ignores):
+
+    def decorator(f):
+        @functools.wraps(f)
+        def wrapped(*args, **kwargs):
+            for ignore in ignores:
+                if ignore in kwargs:
+                    del kwargs[ignore]
+            return f(*args, **kwargs)
+        return wrapped
+
+    return decorator
 
 
 class Resources(object):
@@ -123,6 +138,14 @@ class BuildResource(Resource):
 class BuildResultsResource(Resources):
     ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_id}/results"
     RESOURCE_CLASS = Result
+
+    @ignore_kwargs("build_id")
+    def on_get(self, req, resp, **kwargs):
+        return super(BuildResultsResource, self).on_get(req, resp, **kwargs)
+
+    @ignore_kwargs("build_id")
+    def on_post(self, req, resp, **kwargs):
+        return super(BuildResultsResource, self).on_post(req, resp, **kwargs)
 
 
 class BuildResultResource(Resource):
