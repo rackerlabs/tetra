@@ -15,9 +15,17 @@ limitations under the License.
 """
 import falcon
 
-from api.resources import (ProjectsResource, BuildResultsResource,
-                           BuildResultResource, SuitesResource, BuildsResource,
-                           ResultsResource, SuiteResource, BuildResource)
+from api.resources import (
+    BuildResource,
+    BuildResultResource,
+    BuildResultsResource,
+    BuildsResource,
+    ProjectsResource,
+    SuiteResource,
+    SuiteResultResource,
+    SuiteResultsResource,
+    SuitesResource,
+)
 
 
 class TetraAPI(falcon.API):
@@ -30,7 +38,8 @@ class TetraAPI(falcon.API):
         ProjectsResource(),
         SuiteResource(),
         SuitesResource(),
-        ResultsResource(),
+        SuiteResultsResource(),
+        SuiteResultResource(),
     ]
 
     def __init__(self):

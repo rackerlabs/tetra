@@ -30,11 +30,11 @@ class Result(BaseModel):
                  id=None, timestamp=None,  result_message=None, region=None,
                  environment=None, build_url=None, extra_data=None):
         if id:
-            self.id = id
+            self.id = int(id)
         self.test_name = test_name
-        self.project_id = project_id
-        self.suite_id = suite_id
-        self.build_num = build_num
+        self.project_id = int(project_id)
+        self.suite_id = int(suite_id)
+        self.build_num = int(build_num)
         self.timestamp = timestamp or time.time()
         self.result = result
         self.result_message = result_message

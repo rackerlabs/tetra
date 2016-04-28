@@ -71,3 +71,23 @@ class TetraClient(BaseClient):
     def delete_build(self, project_id, suite_id, build_id, params=None):
         url = self.url(project_id, '/suites', suite_id, '/builds', build_id)
         return requests.delete(url, params=params)
+
+    @log_response
+    def list_results(self, project_id, suite_id, params=None):
+        url = self.url(project_id, '/suites', suite_id, '/results')
+        return requests.get(url, params=params)
+
+    @log_response
+    def create_result(self, project_id, suite_id, data, params=None):
+        url = self.url(project_id, '/suites', suite_id, '/results')
+        return requests.post(url, data=json.dumps(data), params=params)
+
+    @log_response
+    def get_result(self, project_id, suite_id, result_id, params=None):
+        url = self.url(project_id, '/suites', suite_id, '/results', result_id)
+        return requests.get(url, params=params)
+
+    @log_response
+    def delete_result(self, project_id, suite_id, result_id, params=None):
+        url = self.url(project_id, '/suites', suite_id, '/results', result_id)
+        return requests.delete(url, params=params)

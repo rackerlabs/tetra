@@ -132,6 +132,12 @@ class BuildResultResource(Resource):
     RESOURCE_ID_KEY = "result_id"
 
 
-class ResultsResource(Resources):
+class SuiteResultsResource(Resources):
     ROUTE = "/{project_id}/suites/{suite_id}/results"
     RESOURCE_CLASS = Result
+
+
+class SuiteResultResource(Resource):
+    ROUTE = "/{project_id}/suites/{suite_id}/results/{result_id}"
+    RESOURCE_CLASS = Result
+    RESOURCE_ID_KEY = "result_id"

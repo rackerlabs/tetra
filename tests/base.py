@@ -1,3 +1,4 @@
+import random
 import unittest
 
 from tests.client import TetraClient
@@ -36,13 +37,40 @@ class BaseTetraTest(unittest.TestCase):
 
     def _create_build(self, project_id, suite_id, build_num=None,
                       timestamp=None):
-        data = {'build_num': build_num or 12345}
+        data = {'build_num': build_num or random.randint(1, 9999999)}
         if timestamp is not None:
             data['timestamp'] = timestamp
 
         resp = self.client.create_build(project_id, suite_id, data)
         self.assertEqual(resp.status_code, 201)
         self.addCleanup(self.client.delete_build, project_id, suite_id,
+                        resp.json()['id'])
+
+        self.assertEqual(resp.json()['project_id'], project_id)
+        self.assertEqual(resp.json()['suite_id'], suite_id)
+        return resp
+
+    def _create_result(self, project_id, suite_id, test_name, result,
+                       build_num, timestamp=None, region=None,
+                       environment=None, build_url=None, result_message=None,
+                       extra_data=None):
+        data = {
+            'test_name': test_name or "name of the test!",
+            'result': result or random.choice(['passed', 'failed']),
+            'build_num': build_num or random.randint(1, 9999999),
+            'timestamp': timestamp,
+            'region': region,
+            'environment': environment,
+            'build_url': build_url,
+            'result_message': result_message,
+            'extra_data': extra_data,
+        }
+        # remove all the none values
+        data = {k: v for k, v in data.items() if v is not None}
+
+        resp = self.client.create_result(project_id, suite_id, data)
+        self.assertEqual(resp.status_code, 201)
+        self.addCleanup(self.client.delete_result, project_id, suite_id,
                         resp.json()['id'])
 
         self.assertEqual(resp.json()['project_id'], project_id)
