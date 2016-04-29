@@ -28,6 +28,10 @@ class DatabaseClient(object):
         pass
 
     @abstractmethod
+    def create_many(self, resources):
+        pass
+
+    @abstractmethod
     def update(self, resource_id, resource):
         pass
 

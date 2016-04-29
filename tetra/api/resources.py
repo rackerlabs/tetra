@@ -13,9 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import functools
 import falcon
 import json
+
+import xunitparser
 
 from tetra.data.models.build import Build
 from tetra.data.models.project import Project
@@ -144,6 +145,38 @@ class BuildResultResource(Resource):
 class SuiteResultsResource(Resources):
     ROUTE = "/{project_id}/suites/{suite_id}/results"
     RESOURCE_CLASS = Result
+
+    def on_post(self, req, resp, **kwargs):
+        if req.content_type and 'application/xml' in req.content_type:
+            return self._on_post_junitxml(req, resp, **kwargs)
+        return super(SuiteResultsResource, self).on_post(req, resp, **kwargs)
+
+    def _on_post_junitxml(self, req, resp, **kwargs):
+        resp.status = falcon.HTTP_204
+        suite, _ = xunitparser.parse(req.stream)
+        results = []
+        for case in suite:
+            if case.success:
+                result_type = "passed"
+            elif case.skipped:
+                result_type = "skipped"
+            elif case.failed or case.errored:
+                result_type = "failed"
+            else:
+                result_type = "unknown"
+
+            result = Result(
+                test_name=case.id(),
+                result=result_type,
+                project_id=kwargs['project_id'],
+                suite_id=kwargs['suite_id'],
+                build_num=req.get_header('X-Tetra-Build-Num'),
+                environment=req.get_header('X-Tetra-Environment'),
+                build_url=req.get_header('X-Tetra-Build-Url'),
+                region=req.get_header('X-Tetra-Region'),
+            )
+            results.append(result)
+        Result.create_many(results)
 
 
 class SuiteResultResource(Resource):

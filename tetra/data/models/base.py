@@ -35,6 +35,11 @@ class BaseModel(object):
         return handler.create(resource)
 
     @classmethod
+    def create_many(cls, resources, handler=None):
+        handler = handler or get_handler()
+        return handler.create_many(resources)
+
+    @classmethod
     def get(cls, resource_id, handler=None, **kwargs):
         handler = handler or get_handler()
         return handler.get(resource_id=resource_id, resource_class=cls)
