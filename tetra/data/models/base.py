@@ -13,7 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from tetra.config import cfg
 from tetra.data.db_handler import get_handler
+
+conf = cfg.CONF
 
 
 class BaseModel(object):
@@ -49,10 +52,16 @@ class BaseModel(object):
     @classmethod
     def get_all(cls, handler=None, limit=None, offset=None, **kwargs):
         handler = handler or get_handler()
-        query = None
+        limit = limit or conf.api.default_limit
+
+        query = cls.TABLE.select()
+
         and_clause = cls._and_clause(**kwargs)
         if and_clause is not None:
-            query = cls.TABLE.select().where(and_clause)
+            query = query.where(and_clause)
+
+        query = query.order_by(cls.TABLE.c.id)
+
         return handler.get_all(resource_class=cls, query=query, limit=limit,
                                offset=offset)
 
