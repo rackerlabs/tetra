@@ -67,8 +67,8 @@ class PostgresClient(DatabaseClient):
     def get_all(self, resource_class, query=None, limit=None, offset=None):
         if query is None:
             query = resource_class.TABLE.select()
-        if limit is not None:
-            query = query.limit(limit)
+        limit = limit or conf.api.default_limit
+        query = query.limit(limit)
         if offset is not None:
             query = query.offset(offset)
 
