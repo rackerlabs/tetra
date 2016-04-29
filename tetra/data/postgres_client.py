@@ -64,11 +64,13 @@ class PostgresClient(DatabaseClient):
         result.close()
         return resource_class.from_dict(data)
 
-    def get_all(self, resource_class, query=None, limit=None):
+    def get_all(self, resource_class, query=None, limit=None, offset=None):
         if query is None:
             query = resource_class.TABLE.select()
         if limit is not None:
             query = query.limit(limit)
+        if offset is not None:
+            query = query.offset(offset)
 
         result = self.engine.execute(query)
         rows = result.fetchall()

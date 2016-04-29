@@ -104,38 +104,63 @@ class TestSuiteResultsPagination(BaseSuiteResultTest):
 
         self.n_results = len(self.result_ids)
 
-    def test_list_suite_results_limit(self):
-        # check that all results are returned with no limit
-        resp = self.client.list_suite_results(self.project_id, self.suite_id)
+    def _checkResultsResp(self, resp, n_results):
         self.assertEqual(resp.status_code, 200)
 
         results = resp.json()['results']
+        self.assertEqual(len(results), n_results)
+
         metadata = resp.json()['metadata']
-        self.assertEqual(len(results), self.n_results)
         self.assertEqual(metadata['total_results'], self.n_results)
+        self.assertEqual(metadata['total_passed'], self.n_results / 2)
+        self.assertEqual(metadata['total_failures'], self.n_results / 2)
+        self.assertEqual(metadata['total_skipped'], 0)
+        self.assertEqual(metadata['success_rate'], 50.00)
+
+    def test_list_suite_results_limit(self):
+        # check that all results are returned with no limit
+        resp = self.client.list_suite_results(self.project_id, self.suite_id)
+        self._checkResultsResp(resp, self.n_results)
 
         # check limit <= number of results
         for limit in range(self.n_results + 1):
             resp = self.client.list_suite_results(
                 self.project_id, self.suite_id, params={'limit': limit},
             )
-            results = resp.json()['results']
-            metadata = resp.json()['metadata']
-            self.assertEqual(len(results), limit)
-
-            # the metadata shouldn't change based on the limit
-            self.assertEqual(metadata['total_results'], self.n_results)
-            self.assertEqual(metadata['total_passed'], self.n_results / 2)
-            self.assertEqual(metadata['total_failures'], self.n_results / 2)
-            self.assertEqual(metadata['total_skipped'], 0)
-            self.assertEqual(metadata['success_rate'], 50.00)
+            self._checkResultsResp(resp, limit)
 
         # check limit > number of results
         for limit in range(self.n_results + 1, self.n_results + 4):
             resp = self.client.list_suite_results(
                 self.project_id, self.suite_id, params={'limit': limit},
             )
-            results = resp.json()['results']
-            metadata = resp.json()['metadata']
-            self.assertEqual(len(results), self.n_results)
-            self.assertEqual(metadata['total_results'], self.n_results)
+            self._checkResultsResp(resp, self.n_results)
+
+    def test_list_suite_results_offset(self):
+        # check offset < number of results
+        for offset in range(self.n_results):
+            resp = self.client.list_suite_results(
+                self.project_id, self.suite_id, params={'offset': offset},
+            )
+            self._checkResultsResp(resp, n_results=self.n_results - offset)
+
+        # check offset >= number of results (returns no results)
+        for offset in range(self.n_results, self.n_results + 4):
+            resp = self.client.list_suite_results(
+                self.project_id, self.suite_id, params={'offset': offset}
+            )
+            self._checkResultsResp(resp, n_results=0)
+
+    def test_list_suite_results_with_limit_and_offset(self):
+        for limit in range(self.n_results):
+            for offset in range(self.n_results):
+                resp = self.client.list_suite_results(
+                    self.project_id, self.suite_id,
+                    params={'offset': offset, 'limit': limit},
+                )
+                self.assertEqual(resp.status_code, 200)
+
+                actual_ids = [x['id'] for x in resp.json()['results']]
+                expected_ids = self.result_ids[offset:offset + limit]
+
+                self.assertEqual(actual_ids, expected_ids)

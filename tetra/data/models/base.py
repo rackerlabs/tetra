@@ -47,13 +47,14 @@ class BaseModel(object):
         return and_clause
 
     @classmethod
-    def get_all(cls, handler=None, limit=None, **kwargs):
+    def get_all(cls, handler=None, limit=None, offset=None, **kwargs):
         handler = handler or get_handler()
         query = None
         and_clause = cls._and_clause(**kwargs)
         if and_clause is not None:
             query = cls.TABLE.select().where(and_clause)
-        return handler.get_all(resource_class=cls, query=query, limit=limit)
+        return handler.get_all(resource_class=cls, query=query, limit=limit,
+                               offset=offset)
 
     @classmethod
     def delete(cls, resource_id, handler=None):

@@ -44,10 +44,10 @@ class Result(BaseModel):
         self.extra_data = extra_data
 
     @classmethod
-    def get_all(cls, handler=None, limit=None, **kwargs):
+    def get_all(cls, handler=None, limit=None, offset=None, **kwargs):
         handler = handler or get_handler()
         results = super(cls, Result).get_all(handler=None, limit=limit,
-                                             **kwargs)
+                                             offset=offset, **kwargs)
 
         query = select(
             [cls.TABLE.c.result, func.count(cls.TABLE.c.result).label("count")]
