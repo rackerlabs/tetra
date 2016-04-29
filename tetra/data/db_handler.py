@@ -15,11 +15,11 @@ limitations under the License.
 """
 import logging
 
-from tetra.config import get_config
+from tetra.config import cfg
 from tetra.data.postgres_client import PostgresClient
 
 LOG = logging.getLogger(__name__)
-conf = get_config()
+conf = cfg.CONF
 
 handlers = {
     'postgres': PostgresClient()
