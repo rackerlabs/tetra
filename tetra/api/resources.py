@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import functools
 import falcon
 import json
 
@@ -88,6 +89,19 @@ class BuildsResource(Resources):
     ROUTE = "/{project_id}/suites/{suite_id}/builds"
     RESOURCE_CLASS = Build
 
+    def on_get(self, req, resp, **kwargs):
+        resp.status = falcon.HTTP_200
+        kwargs.update(req.params)
+        builds = self.RESOURCE_CLASS.get_all(**kwargs)
+
+        for build in builds:
+            results = Result.get_all(project_id=build['project_id'],
+                                     suite_id=build['suite_id'],
+                                     build_num=build['build_num'])
+            build['results'] = results.get("metadata")
+
+        resp.body = json.dumps(builds)
+
     def on_post(self, req, resp, **kwargs):
         resp.status = falcon.HTTP_201
         data = req.stream.read()
@@ -96,31 +110,43 @@ class BuildsResource(Resources):
         suite_id = kwargs.get("suite_id")
         data_dict['project_id'] = project_id
         data_dict['suite_id'] = suite_id
-        results = Result.get_all(project_id=project_id,
-                                 suite_id=suite_id,
-                                 build_num=data_dict.get("build_num"))
-        data_dict['results'] = json.dumps(results.get("metadata"))
         build = Build.from_dict(data_dict)
         created_result = Build.create(resource=build)
         resp.body = json.dumps(created_result.to_dict())
 
 
-class BuildResource(object):
-    ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_num}"
+class BuildResource(Resource):
+    ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_id}"
+    RESOURCE_CLASS = Build
+    RESOURCE_ID_KEY = "build_id"
 
 
 class BuildResultsResource(Resources):
-    ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_num}/results"
+    ROUTE = "/{project_id}/suites/{suite_id}/builds/{build_id}/results"
     RESOURCE_CLASS = Result
+
+    # a result is tied to a build via the build_num only, so we can ignore
+    # the build_id when listing or posting results for this route.
+    def on_get(self, req, resp, build_id, **kwargs):
+        return super(BuildResultsResource, self).on_get(req, resp, **kwargs)
+
+    def on_post(self, req, resp, build_id, **kwargs):
+        return super(BuildResultsResource, self).on_post(req, resp, **kwargs)
 
 
 class BuildResultResource(Resource):
-    ROUTE = ("/{project_id}/suites/{suite_id}/builds/{build_num}"
+    ROUTE = ("/{project_id}/suites/{suite_id}/builds/{build_id}"
              "/results/{result_id}")
     RESOURCE_CLASS = Result
     RESOURCE_ID_KEY = "result_id"
 
 
-class ResultsResource(Resources):
+class SuiteResultsResource(Resources):
     ROUTE = "/{project_id}/suites/{suite_id}/results"
     RESOURCE_CLASS = Result
+
+
+class SuiteResultResource(Resource):
+    ROUTE = "/{project_id}/suites/{suite_id}/results/{result_id}"
+    RESOURCE_CLASS = Result
+    RESOURCE_ID_KEY = "result_id"

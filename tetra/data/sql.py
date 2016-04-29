@@ -34,7 +34,8 @@ suites_table = Table(
     'suites', metadata,
     Column('id', Integer, nullable=False, primary_key=True,
            autoincrement=True),
-    Column('project_id', ForeignKey(projects_table.c.id), nullable=False),
+    Column('project_id', ForeignKey(projects_table.c.id, ondelete='CASCADE'),
+           nullable=False),
     Column('name', String(256), nullable=False),
     Column('description', String(256), nullable=True),
 
@@ -45,11 +46,12 @@ builds_table = Table(
     'builds', metadata,
     Column('id', Integer, nullable=False, primary_key=True,
            autoincrement=True),
-    Column('project_id', ForeignKey(projects_table.c.id), nullable=False),
-    Column('suite_id', ForeignKey(suites_table.c.id), nullable=False),
+    Column('project_id', ForeignKey(projects_table.c.id, ondelete='CASCADE'),
+           nullable=False),
+    Column('suite_id', ForeignKey(suites_table.c.id, ondelete='CASCADE'),
+           nullable=False),
     Column('build_num', Integer, nullable=False),
     Column('timestamp', Integer, nullable=False),
-    Column('results', String(256), nullable=False),
 
     Index('build_index', 'project_id', 'suite_id', 'build_num')
 )
@@ -58,8 +60,10 @@ results_table = Table(
     'results', metadata,
     Column('id', Integer, nullable=False, primary_key=True,
            autoincrement=True),
-    Column('project_id', ForeignKey(projects_table.c.id), nullable=False),
-    Column('suite_id', ForeignKey(suites_table.c.id), nullable=False),
+    Column('project_id', ForeignKey(projects_table.c.id, ondelete='CASCADE'),
+           nullable=False),
+    Column('suite_id', ForeignKey(suites_table.c.id, ondelete='CASCADE'),
+           nullable=False),
     Column('build_num', Integer, nullable=False),
     Column('test_name', String(256), nullable=False),
     Column('timestamp', Integer, nullable=False),

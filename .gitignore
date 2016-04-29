@@ -1,5 +1,7 @@
 *.idea
 *.iml
 *.pyc
-/.venv
+.venv
 tetra.conf
+.cache/
+tetra-test.conf

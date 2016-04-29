@@ -21,6 +21,8 @@ endif
 help:
 	@echo 'Api commands:'
 	@echo '  start                      - start the tetra api, running locally'
+	@echo 'Test commands:'
+	@echo '  test                       - run tests (you must first write tetra-test.conf)'
 	@echo 'Docker commands:'
 	@echo '  docker-build               - build the postgres docker image ($(DOCKER_TAG))'
 	@echo '  docker-run                 - run the postgres docker container ($(DOCKER_TAG))'
@@ -37,7 +39,10 @@ help:
 	@echo '  docker-postgres-shell      - start the postgres shell in your container'
 
 start:
-	gunicorn --bind 127.0.0.1:7374 tetra.app:application
+	gunicorn --reload --bind 127.0.0.1:7374 tetra.app:application
+
+test:
+	py.test -v ./tests
 
 docker-build: docker-machine-create
 	$(WITH_DOCKER_ENV) && docker build -t $(DOCKER_TAG) .

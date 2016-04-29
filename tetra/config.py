@@ -16,7 +16,21 @@ limitations under the License.
 from six.moves.configparser import ConfigParser
 import os.path
 
-_CONFIG_FILE = '/etc/tetra/tetra.conf'
+_CONFIG_FILE_LOCATIONS = (
+    os.path.realpath('tetra.conf'),
+    os.path.realpath('etc/tetra/tetra.conf'),
+    '/etc/tetra/tetra.conf',
+)
+
+
+def _find_config_file(locations):
+    for path in locations:
+        if os.path.exists(path):
+            return path
+    raise Exception("Failed to find config at any of these paths: {0}"
+                    .format(locations))
+
+_CONFIG_FILE = _find_config_file(_CONFIG_FILE_LOCATIONS)
 
 _CFG_DEFAULTS = {
     'sqlalchemy': {
