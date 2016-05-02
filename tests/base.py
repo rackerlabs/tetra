@@ -104,7 +104,7 @@ class BaseTetraTest(unittest.TestCase):
         resp = self.client.create_suite_result_junit_xml(
             project_id, suite_id, xml_string, headers=headers,
         )
-        self.assertEqual(resp.status_code, 204)
+        self.assertEqual(resp.status_code, 201)
         return resp
 
     def _get_result_data(self, project_id, suite_id, test_name, result,

@@ -71,9 +71,31 @@ class Result(BaseModel):
     @classmethod
     def get_all(cls, handler=None, limit=None, offset=None, **kwargs):
         handler = handler or get_handler()
-        results = super(cls, Result).get_all(handler=None, limit=limit,
+        results = super(cls, Result).get_all(handler=handler, limit=limit,
                                              offset=offset, **kwargs)
+        metadata = cls._get_results_metadata(handler, **kwargs)
 
+        results_dict = {
+            "results": results,
+            "metadata": metadata
+        }
+        return results_dict
+
+    @classmethod
+    def create_many(cls, resources, handler=None, **kwargs):
+        handler = handler or get_handler()
+        super(cls, Result).create_many(resources, handler=handler)
+
+        metadata = cls._get_results_metadata(handler, **kwargs)
+
+        results_dict = {
+            "metadata": metadata,
+        }
+        return results_dict
+
+    @classmethod
+    def _get_results_metadata(cls, handler=None, **kwargs):
+        handler = handler or get_handler()
         query = select(
             [cls.TABLE.c.result, func.count(cls.TABLE.c.result).label("count")]
         ).where(cls._and_clause(**kwargs)).group_by(cls.TABLE.c.result)
@@ -110,10 +132,5 @@ class Result(BaseModel):
             "total_skipped": total_skipped,
             "success_rate": success_rate
         }
+        return metadata
 
-        results_dict = {
-            "results": results,
-            "metadata": metadata
-        }
-
-        return results_dict
