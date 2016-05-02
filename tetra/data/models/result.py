@@ -44,6 +44,31 @@ class Result(BaseModel):
         self.extra_data = extra_data
 
     @classmethod
+    def from_junit_xml_test_case(cls, case, req, project_id, suite_id):
+        if case.success:
+            result_type = "passed"
+        elif case.skipped:
+            result_type = "skipped"
+        elif case.failed:
+            result_type = "failed"
+        elif case.errored:
+            result_type = "error"
+        else:
+            result_type = "unknown"
+
+        return Result(
+            test_name=case.id(),
+            result=result_type,
+            project_id=project_id,
+            suite_id=suite_id,
+            build_num=req.get_header('X-Tetra-Build-Num'),
+            environment=req.get_header('X-Tetra-Environment'),
+            build_url=req.get_header('X-Tetra-Build-Url'),
+            region=req.get_header('X-Tetra-Region'),
+        )
+
+
+    @classmethod
     def get_all(cls, handler=None, limit=None, offset=None, **kwargs):
         handler = handler or get_handler()
         results = super(cls, Result).get_all(handler=None, limit=limit,

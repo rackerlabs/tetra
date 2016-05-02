@@ -87,9 +87,17 @@ class SuiteResultClientMixin(BaseClient):
         return requests.get(url, params=params)
 
     @log_response
-    def create_suite_result(self, project_id, suite_id, data, params=None):
+    def create_suite_result(self, project_id, suite_id, data, params=None,
+                            headers=None):
         url = self.url(project_id, '/suites', suite_id, '/results')
-        return requests.post(url, data=json.dumps(data), params=params)
+        return requests.post(url, data=json.dumps(data), params=params,
+                             headers=headers)
+
+    @log_response
+    def create_suite_result_junit_xml(self, project_id, suite_id, data,
+                                      params=None, headers=None):
+        url = self.url(project_id, '/suites', suite_id, '/results')
+        return requests.post(url, data=data, params=params, headers=headers)
 
     @log_response
     def get_suite_result(self, project_id, suite_id, result_id, params=None):

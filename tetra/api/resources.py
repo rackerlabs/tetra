@@ -153,29 +153,14 @@ class SuiteResultsResource(Resources):
 
     def _on_post_junitxml(self, req, resp, **kwargs):
         resp.status = falcon.HTTP_204
-        suite, _ = xunitparser.parse(req.stream)
-        results = []
-        for case in suite:
-            if case.success:
-                result_type = "passed"
-            elif case.skipped:
-                result_type = "skipped"
-            elif case.failed or case.errored:
-                result_type = "failed"
-            else:
-                result_type = "unknown"
+        project_id = kwargs['project_id']
+        suite_id = kwargs['suite_id']
 
-            result = Result(
-                test_name=case.id(),
-                result=result_type,
-                project_id=kwargs['project_id'],
-                suite_id=kwargs['suite_id'],
-                build_num=req.get_header('X-Tetra-Build-Num'),
-                environment=req.get_header('X-Tetra-Environment'),
-                build_url=req.get_header('X-Tetra-Build-Url'),
-                region=req.get_header('X-Tetra-Region'),
-            )
-            results.append(result)
+        suite, _ = xunitparser.parse(req.stream)
+        results = [
+            Result.from_junit_xml_test_case(case, req, project_id, suite_id)
+            for case in suite
+        ]
         Result.create_many(results)
 
 
