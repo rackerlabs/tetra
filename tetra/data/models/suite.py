@@ -23,7 +23,7 @@ class Suite(BaseModel):
 
     def __init__(self, project_id, name, description=None, id=None):
         if id:
-            self.id = id
-        self.project_id = project_id
+            self.id = int(id)
+        self.project_id = int(project_id)
         self.name = name
         self.description = description

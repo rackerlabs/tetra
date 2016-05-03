@@ -40,5 +40,5 @@ class DatabaseClient(object):
         pass
 
     @abstractmethod
-    def get_all(self, resource_class):
+    def get_all(self, resource_class, limit=None, offset=None):
         pass

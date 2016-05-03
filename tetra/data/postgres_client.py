@@ -13,11 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from tetra.config import get_config
+from tetra.config import cfg
 from tetra.data.database_client import DatabaseClient
 from tetra.data.sql import db_connect
 
-conf = get_config()
+conf = cfg.CONF
 
 DATABASE = {
     'drivername': 'postgres',
@@ -64,9 +64,14 @@ class PostgresClient(DatabaseClient):
         result.close()
         return resource_class.from_dict(data)
 
-    def get_all(self, resource_class, query=None):
+    def get_all(self, resource_class, query=None, limit=None, offset=None):
         if query is None:
             query = resource_class.TABLE.select()
+
+        if limit is not None:
+            query = query.limit(limit)
+        if offset is not None:
+            query = query.offset(offset)
 
         result = self.engine.execute(query)
         rows = result.fetchall()
