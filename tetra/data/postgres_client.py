@@ -44,6 +44,14 @@ class PostgresClient(DatabaseClient):
         resource.id = result.inserted_primary_key[0]
         return resource
 
+    def create_many(self, resources):
+        if not resources:
+            return
+        table = resources[0].TABLE
+        result = self.engine.execute(table.insert(),
+                                     [r.to_dict() for r in resources])
+        result.close()
+
     def update(self, resource_id, resource):
         pass
 

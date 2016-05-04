@@ -20,6 +20,7 @@ from sqlalchemy.sql import func, select
 from tetra.data import sql
 from tetra.data.db_handler import get_handler
 from tetra.data.models.base import BaseModel
+from tetra.data.models.result_metadata import ResultMetadata
 
 
 class Result(BaseModel):
@@ -44,51 +45,62 @@ class Result(BaseModel):
         self.extra_data = extra_data
 
     @classmethod
+    def from_junit_xml_test_case(cls, case, req, project_id, suite_id):
+        if case.success:
+            result_type = "passed"
+        elif case.skipped:
+            result_type = "skipped"
+        elif case.failed:
+            result_type = "failed"
+        elif case.errored:
+            result_type = "error"
+        else:
+            result_type = "unknown"
+
+        return Result(
+            test_name=case.id(),
+            result=result_type,
+            project_id=project_id,
+            suite_id=suite_id,
+            build_num=req.get_header('X-Tetra-Build-Num'),
+            environment=req.get_header('X-Tetra-Environment'),
+            build_url=req.get_header('X-Tetra-Build-Url'),
+            region=req.get_header('X-Tetra-Region'),
+        )
+
+    @classmethod
     def get_all(cls, handler=None, limit=None, offset=None, **kwargs):
         handler = handler or get_handler()
-        results = super(cls, Result).get_all(handler=None, limit=limit,
+        results = super(cls, Result).get_all(handler=handler, limit=limit,
                                              offset=offset, **kwargs)
+
+        metadata = cls._get_results_metadata(handler, **kwargs)
+
+        results_dict = {
+            "results": results,
+            "metadata": metadata.to_dict(),
+        }
+        return results_dict
+
+    @classmethod
+    def create_many(cls, resources, handler=None, **kwargs):
+        handler = handler or get_handler()
+        super(cls, Result).create_many(resources, handler=handler)
+
+        metadata = ResultMetadata.from_results_list(resources)
+
+        results_dict = {
+            "metadata": metadata.to_dict(),
+        }
+        return results_dict
+
+    @classmethod
+    def _get_results_metadata(cls, handler=None, **kwargs):
+        handler = handler or get_handler()
 
         query = select(
             [cls.TABLE.c.result, func.count(cls.TABLE.c.result).label("count")]
         ).where(cls._and_clause(**kwargs)).group_by(cls.TABLE.c.result)
         count_results = handler.get_all(resource_class=Result, query=query)
 
-        total_results = 0
-        total_failures = 0
-        total_errors = 0
-        total_skipped = 0
-        total_passed = 0
-
-        for result in count_results:
-            total_results += result["count"]
-            if "fail" in result["result"].lower():
-                total_failures += result["count"]
-            elif "error" in result["result"].lower():
-                total_errors += result["count"]
-            elif "skip" in result["result"].lower():
-                total_skipped += result["count"]
-            else:
-                total_passed += result["count"]
-
-        success_rate = 0
-        if total_results > 0:
-            success_rate = (total_passed /
-                            float(total_results - total_skipped) * 100)
-            success_rate = float("{0:.2f}".format(success_rate))
-
-        metadata = {
-            "total_results": total_results,
-            "total_passed": total_passed,
-            "total_failures": total_failures,
-            "total_errors": total_errors,
-            "total_skipped": total_skipped,
-            "success_rate": success_rate
-        }
-
-        results_dict = {
-            "results": results,
-            "metadata": metadata
-        }
-
-        return results_dict
+        return ResultMetadata.from_database_counts(count_results)

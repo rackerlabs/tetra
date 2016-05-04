@@ -5,3 +5,4 @@ gunicorn
 psycopg2
 sqlalchemy
 oslo.config
+xunitparser

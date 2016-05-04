@@ -83,6 +83,30 @@ class BaseTetraTest(unittest.TestCase):
         self.assertEqual(resp.json()['suite_id'], suite_id)
         return resp
 
+    def _create_junit_xml_results(self, project_id, suite_id, xml_string,
+                                  build_num, timestamp=None, region=None,
+                                  environment=None, build_url=None,
+                                  result_message=None, extra_data=None):
+        headers = {
+            'Content-type': 'application/xml',
+            'X-Tetra-Build-Num': build_num,
+            'X-Tetra-Timestamp': timestamp,
+            'X-Tetra-Region': region,
+            'X-Tetra-Environment': environment,
+            'X-Tetra-Build-Url': build_url,
+            'X-Tetra-Result-Message': result_message,
+            'X-Tetra-Extra-Data': extra_data,
+        }
+        headers = {k: v for k, v in headers.items() if v is not None}
+
+        # there's not a way to clean all these results up, but they will be
+        # deleted when the suite is deleted.
+        resp = self.client.create_suite_result_junit_xml(
+            project_id, suite_id, xml_string, headers=headers,
+        )
+        self.assertEqual(resp.status_code, 201)
+        return resp
+
     def _get_result_data(self, project_id, suite_id, test_name, result,
                          build_num, timestamp=None, region=None,
                          environment=None, build_url=None,

@@ -13,9 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import functools
 import falcon
 import json
+
+import xunitparser
 
 from tetra.data.models.build import Build
 from tetra.data.models.project import Project
@@ -144,6 +145,25 @@ class BuildResultResource(Resource):
 class SuiteResultsResource(Resources):
     ROUTE = "/{project_id}/suites/{suite_id}/results"
     RESOURCE_CLASS = Result
+
+    def on_post(self, req, resp, **kwargs):
+        if self._is_junit_xml_request(req):
+            return self._on_post_junitxml(req, resp, **kwargs)
+        return super(SuiteResultsResource, self).on_post(req, resp, **kwargs)
+
+    def _is_junit_xml_request(self, req):
+        return req.content_type and 'application/xml' in req.content_type
+
+    def _on_post_junitxml(self, req, resp, **kwargs):
+        resp.status = falcon.HTTP_201
+
+        suite, _ = xunitparser.parse(req.stream)
+        results = [
+            Result.from_junit_xml_test_case(case, req, **kwargs)
+            for case in suite
+        ]
+        response_data = Result.create_many(results, **kwargs)
+        resp.body = json.dumps(response_data)
 
 
 class SuiteResultResource(Resource):

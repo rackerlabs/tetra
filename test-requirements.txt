@@ -1,3 +1,4 @@
 requests
 oslo.config
 pytest
+junit-xml
