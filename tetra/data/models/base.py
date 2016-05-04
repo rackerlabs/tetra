@@ -19,8 +19,7 @@ from tetra.data.db_handler import get_handler
 conf = cfg.CONF
 
 
-class BaseModel(object):
-    TABLE = None
+class DictSerializer(object):
 
     @classmethod
     def from_dict(cls, data):
@@ -28,6 +27,11 @@ class BaseModel(object):
 
     def to_dict(self):
         return dict(self.__dict__)
+
+
+class BaseModel(DictSerializer):
+
+    TABLE = None
 
     @classmethod
     def create(cls, resource, handler=None):
