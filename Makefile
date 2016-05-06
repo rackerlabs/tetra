@@ -4,7 +4,8 @@ SHELL := /bin/bash
 UNAME := $(shell uname)
 
 # the image and container are both named this
-DOCKER_TAG := tetra-db
+DOCKER_TAG := tetra-api
+DOCKER_DB_TAG := tetra-db
 
 # set some variables for docker-machine, which we need outside of Linux
 ifeq ($(UNAME), Linux)
@@ -24,10 +25,11 @@ help:
 	@echo 'Test commands:'
 	@echo '  test                       - run tests (you must first write tetra-test.conf)'
 	@echo 'Docker commands:'
-	@echo '  docker-build               - build the postgres docker image ($(DOCKER_TAG))'
-	@echo '  docker-run                 - run the postgres docker container ($(DOCKER_TAG))'
+	@echo '  docker-build               - build the api docker image ($(DOCKER_TAG))'
+	@echo '  docker-dev                 - build/run the api and postgres images/containers for a dev environment'
+	@echo '  docker-db                  - run the postgres docker container in background ($(DOCKER_DB_TAG))'
 	@echo '  docker-ps                  - list running docker containers'
-	@echo '  docker-stop                - stop and rm the container ($(DOCKER_TAG))'
+	@echo '  docker-stop                - stop and rm the containers ($(DOCKER_TAG), $(DOCKER_DB_TAG))'
 	@echo '  docker-port                - display the real <ip>:<port> for the database'
 	@echo '  docker-machine-create      - start the boot2docker vm ($(DOCKER_MACHINE_NAME))'
 	@echo '                               NOTE: this is a no-op on linux.'
@@ -47,26 +49,29 @@ test:
 docker-build: docker-machine-create
 	$(WITH_DOCKER_ENV) && docker build -t $(DOCKER_TAG) .
 
-docker-run:
-	$(WITH_DOCKER_ENV) && docker run -p 5432 -d --name $(DOCKER_TAG) $(DOCKER_TAG)
+docker-dev:
+	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up api
+
+docker-db:
+	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d db
 
 docker-ps:
 	$(WITH_DOCKER_ENV) && docker ps
 
 docker-stop:
-	$(WITH_DOCKER_ENV) && docker stop $(DOCKER_TAG) && docker rm $(DOCKER_TAG)
+	$(WITH_DOCKER_ENV) && docker-compose stop
 
 docker-port:
 ifeq ($(UNAME), Linux)
-	$(WITH_DOCKER_ENV) && docker port $(DOCKER_TAG) 5432
+	$(WITH_DOCKER_ENV) && docker port $(DOCKER_DB_TAG) 5432
 else
 	@echo `docker-machine ip $(DOCKER_MACHINE_NAME)`:$(shell \
-		$(WITH_DOCKER_ENV) && docker port $(DOCKER_TAG) 5432 | cut -d':' -f 2 \
+		$(WITH_DOCKER_ENV) && docker port $(DOCKER_DB_TAG) 5432 | cut -d':' -f 2 \
 	)
 endif
 
 docker-postgres-shell:
-	$(WITH_DOCKER_ENV) && docker exec -it $(DOCKER_TAG) \
+	$(WITH_DOCKER_ENV) && docker exec -it $(DOCKER_DB_TAG) \
 		bash -c 'PGPASSWORD=password psql -U postgres'
 
 docker-machine-create:

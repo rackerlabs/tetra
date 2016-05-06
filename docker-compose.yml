@@ -3,6 +3,7 @@ services:
   api:
     build: .
     image: tetra-api
+    container_name: tetra-api
     ports:
       - "7374:7374"
     depends_on:
