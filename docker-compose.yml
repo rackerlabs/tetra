@@ -5,8 +5,6 @@ services:
     image: tetra-api
     ports:
       - "7374:7374"
-    volumes:
-     - .:/tetra
     depends_on:
       - db
     links:
