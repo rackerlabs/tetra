@@ -1,5 +1,6 @@
 from tests.base import BaseTetraTest
 
+
 class BaseSuiteResultTest(BaseTetraTest):
 
     def setUp(self):
@@ -47,7 +48,7 @@ class TestSuiteResults(BaseSuiteResultTest):
 
     def test_get_suite_result(self):
         resp = self.client.get_suite_result(self.project_id, self.suite_id,
-                                      self.result_id)
+                                            self.result_id)
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(self.create_resp.json()['test_name'], self.test_name)
         self.assertEqual(self.create_resp.json()['result'], 'passed')
@@ -60,16 +61,16 @@ class TestSuiteResults(BaseSuiteResultTest):
 
     def test_delete_suite_result(self):
         resp = self.client.delete_suite_result(self.project_id, self.suite_id,
-                                         self.result_id)
+                                               self.result_id)
         self.assertEqual(resp.status_code, 204)
 
         resp = self.client.get_suite_result(self.project_id, self.suite_id,
-                                      self.result_id)
+                                            self.result_id)
         self.assertEqual(resp.status_code, 404)
 
         # TODO(pglass): delete the result again returns a 204
-        # resp = self.client.delete_suite_result(self.project_id, self.suite_id,
-        #                                  self.result_id)
+        # resp = self.client.delete_suite_result(self.project_id,
+        #                                        self.suite_id, self.result_id)
         # self.assertEqual(resp.status_code, 404)
 
     def test_delete_suite_with_results(self):
@@ -82,7 +83,7 @@ class TestSuiteResults(BaseSuiteResultTest):
 
         # check the result is gone
         resp = self.client.get_suite_result(self.project_id, self.suite_id,
-                                      self.result_id)
+                                            self.result_id)
         self.assertEqual(resp.status_code, 404)
 
 

@@ -105,7 +105,8 @@ class SuiteResultClientMixin(BaseClient):
         return requests.get(url, params=params)
 
     @log_response
-    def delete_suite_result(self, project_id, suite_id, result_id, params=None):
+    def delete_suite_result(self, project_id, suite_id, result_id,
+                            params=None):
         url = self.url(project_id, '/suites', suite_id, '/results', result_id)
         return requests.delete(url, params=params)
 

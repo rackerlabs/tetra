@@ -2,6 +2,7 @@ import random
 
 from tests.base import BaseTetraTest
 
+
 class BaseBuildsTest(BaseTetraTest):
 
     def setUp(self):
@@ -109,6 +110,7 @@ class TestBuildResults(BaseBuildsTest):
         self.assertEqual(resp.status_code, 404)
 
         # TODO(pglass): deleting twice results in a 204
-        # resp = self.client.delete_build_result(self.project_id, self.suite_id,
-        #                                        self.build_id, self.result_id)
+        # resp = self.client.delete_build_result(self.project_id,
+        #                                        self.suite_id, self.build_id,
+        #                                        self.result_id)
         # self.assertEqual(resp.status_code, 404)

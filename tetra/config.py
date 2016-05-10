@@ -30,7 +30,7 @@ cfg.CONF.register_opts([
     cfg.StrOpt('host', default='localhost'),
     cfg.IntOpt('port', default=5432),
     cfg.StrOpt('username', default='postgres'),
-    cfg.StrOpt('password'),
+    cfg.StrOpt('password', default=None),
     cfg.StrOpt('database', default='tetra-ab'),
 ], group='sqlalchemy')
 
