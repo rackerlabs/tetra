@@ -1,0 +1,22 @@
+services:
+    - postgresql
+
+language: python
+python:
+    - "2.7"
+
+env:
+    - TOXENV=flake8
+    - TOXENV=functional
+
+install: "pip install tox"
+
+before_script:
+    - psql -c 'create database "tetra-db";' -U postgres
+    - ./travis-setup.sh
+    - gunicorn --daemon -t 120 --bind 127.0.0.1:7374 tetra.app:application
+
+script: tox
+
+notifications:
+    email: false
