@@ -100,10 +100,10 @@ class ResultsResource(Resources):
     def _on_post_junitxml(self, req, resp, **kwargs):
         resp.status = falcon.HTTP_201
 
-        build, _ = xunitparser.parse(req.stream)
+        suite, _ = xunitparser.parse(req.stream)
         results = [
-            Result.from_junit_xml_test_case(case, req, **kwargs)
-            for case in build
+            Result.from_junit_xml_test_case(case, **kwargs)
+            for case in suite
         ]
         response_data = Result.create_many(results, **kwargs)
         resp.body = json.dumps(response_data)

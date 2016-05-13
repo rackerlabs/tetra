@@ -39,7 +39,7 @@ class Result(BaseModel):
         self.result_message = result_message
 
     @classmethod
-    def from_junit_xml_test_case(cls, case, req, project_id, build_id):
+    def from_junit_xml_test_case(cls, case, project_id, build_id):
         if case.success:
             result_type = "passed"
         elif case.skipped:
