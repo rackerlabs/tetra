@@ -21,106 +21,57 @@ class BaseTetraTest(unittest.TestCase):
         # self.addCleanup(self.client.delete_project, resp.json()['id'])
         return resp
 
-    def _create_suite(self, project_id, name=None, description=None):
+    def _create_build(self, project_id, name=None, build_url=None,
+                      region=None, environment=None):
         data = {
-            'name': name or "test-suite",
-            'description': description or "this is a test suite",
+            'name': name or "test-build",
+            'build_url': build_url or "test-url",
+            'region': region or "test-region",
+            'environment': environment or "test-env",
         }
 
-        resp = self.client.create_suite(project_id, data)
+        resp = self.client.create_build(project_id, data)
         self.assertEqual(resp.status_code, 201)
-        self.addCleanup(self.client.delete_suite, project_id,
+        self.addCleanup(self.client.delete_build, project_id,
                         resp.json()['id'])
 
         self.assertEqual(resp.json()['project_id'], project_id)
         return resp
 
-    def _create_build(self, project_id, suite_id, build_num=None,
-                      timestamp=None):
-        data = {'build_num': build_num or random.randint(1, 9999999)}
-        if timestamp is not None:
-            data['timestamp'] = timestamp
-
-        resp = self.client.create_build(project_id, suite_id, data)
+    def _create_result(self, project_id, build_id, test_name, result,
+                       timestamp=None, result_message=None):
+        data = self._get_result_data(project_id, build_id, test_name, result,
+                                     timestamp, result_message)
+        resp = self.client.create_result(project_id, build_id, data)
         self.assertEqual(resp.status_code, 201)
-        self.addCleanup(self.client.delete_build, project_id, suite_id,
+        self.addCleanup(self.client.delete_result, project_id, build_id,
                         resp.json()['id'])
 
         self.assertEqual(resp.json()['project_id'], project_id)
-        self.assertEqual(resp.json()['suite_id'], suite_id)
+        self.assertEqual(resp.json()['build_id'], build_id)
         return resp
 
-    def _create_suite_result(self, project_id, suite_id, test_name, result,
-                             build_num, timestamp=None, region=None,
-                             environment=None, build_url=None,
-                             result_message=None, extra_data=None):
-        data = self._get_result_data(project_id, suite_id, test_name, result,
-                                     build_num, timestamp, region, environment,
-                                     build_url, result_message, extra_data)
-        resp = self.client.create_suite_result(project_id, suite_id, data)
-        self.assertEqual(resp.status_code, 201)
-        self.addCleanup(self.client.delete_suite_result, project_id, suite_id,
-                        resp.json()['id'])
-
-        self.assertEqual(resp.json()['project_id'], project_id)
-        self.assertEqual(resp.json()['suite_id'], suite_id)
-        return resp
-
-    def _create_build_result(self, project_id, suite_id, build_id, test_name,
-                             result, build_num, timestamp=None, region=None,
-                             environment=None, build_url=None,
-                             result_message=None, extra_data=None):
-        data = self._get_result_data(project_id, suite_id, test_name, result,
-                                     build_num, timestamp, region, environment,
-                                     build_url, result_message, extra_data)
-        resp = self.client.create_build_result(project_id, suite_id, build_id,
-                                               data)
-        self.assertEqual(resp.status_code, 201)
-        self.addCleanup(self.client.delete_build_result, project_id, suite_id,
-                        build_id, resp.json()['id'])
-
-        self.assertEqual(resp.json()['project_id'], project_id)
-        self.assertEqual(resp.json()['suite_id'], suite_id)
-        return resp
-
-    def _create_junit_xml_results(self, project_id, suite_id, xml_string,
-                                  build_num, timestamp=None, region=None,
-                                  environment=None, build_url=None,
-                                  result_message=None, extra_data=None):
+    def _create_junit_xml_results(self, project_id, build_id, xml_string):
         headers = {
-            'Content-type': 'application/xml',
-            'X-Tetra-Build-Num': build_num,
-            'X-Tetra-Timestamp': timestamp,
-            'X-Tetra-Region': region,
-            'X-Tetra-Environment': environment,
-            'X-Tetra-Build-Url': build_url,
-            'X-Tetra-Result-Message': result_message,
-            'X-Tetra-Extra-Data': extra_data,
+            'Content-type': 'application/xml'
         }
         headers = {k: v for k, v in headers.items() if v is not None}
 
         # there's not a way to clean all these results up, but they will be
-        # deleted when the suite is deleted.
-        resp = self.client.create_suite_result_junit_xml(
-            project_id, suite_id, xml_string, headers=headers,
+        # deleted when the build is deleted.
+        resp = self.client.create_result_junit_xml(
+            project_id, build_id, xml_string, headers=headers,
         )
         self.assertEqual(resp.status_code, 201)
         return resp
 
-    def _get_result_data(self, project_id, suite_id, test_name, result,
-                         build_num, timestamp=None, region=None,
-                         environment=None, build_url=None,
-                         result_message=None, extra_data=None):
+    def _get_result_data(self, project_id, build_id, test_name, result,
+                         timestamp=None, result_message=None):
         data = {
             'test_name': test_name or "name of the test!",
             'result': result or random.choice(['passed', 'failed']),
-            'build_num': build_num or random.randint(1, 9999999),
             'timestamp': timestamp,
-            'region': region,
-            'environment': environment,
-            'build_url': build_url,
             'result_message': result_message,
-            'extra_data': extra_data,
         }
         # remove all the none values
         return {k: v for k, v in data.items() if v is not None}

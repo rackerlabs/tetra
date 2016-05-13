@@ -1,13 +1,13 @@
 import random
 
-from tests.api.test_results import BaseSuiteResultTest
+from tests.api.test_results import BaseResultTest
 from tests.junitxml_utils import get_junit_xml_string
 
 
-class TestJunitXmlSuiteResults(BaseSuiteResultTest):
+class TestJunitXmlResults(BaseResultTest):
 
     def setUp(self):
-        super(TestJunitXmlSuiteResults, self).setUp()
+        super(TestJunitXmlResults, self).setUp()
         self.junit_xml_string = get_junit_xml_string(
             n_passes=3,
             n_skips=4,
@@ -21,8 +21,7 @@ class TestJunitXmlSuiteResults(BaseSuiteResultTest):
         # represents the newly-created results, so it be the same both times.
         for _ in range(2):
             resp = self._create_junit_xml_results(
-                self.project_id, self.suite_id, self.junit_xml_string,
-                build_num=self.build_num,
+                self.project_id, self.build_id, self.junit_xml_string
             )
 
             metadata = resp.json()['metadata']
@@ -34,10 +33,9 @@ class TestJunitXmlSuiteResults(BaseSuiteResultTest):
             self.assertEqual(metadata['success_rate'], 21.43)
 
         # we've posted the same junit xml twice. the metadata returned when
-        # listing all results for the build_num should reflect this.
-        resp = self.client.list_suite_results(
-            self.project_id, self.suite_id,
-            params={'build_num': self.build_num}
+        # listing all results for the build_id should reflect this.
+        resp = self.client.list_results(
+            self.project_id, self.build_id
         )
 
         metadata = resp.json()['metadata']
