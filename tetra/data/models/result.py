@@ -27,25 +27,19 @@ class Result(BaseModel):
 
     TABLE = sql.results_table
 
-    def __init__(self, test_name, result, project_id, suite_id, build_num,
-                 id=None, timestamp=None,  result_message=None, region=None,
-                 environment=None, build_url=None, extra_data=None):
+    def __init__(self, test_name, result, project_id, build_id, id=None,
+                 timestamp=None,  result_message=None):
         if id:
             self.id = int(id)
         self.test_name = test_name
         self.project_id = int(project_id)
-        self.suite_id = int(suite_id)
-        self.build_num = int(build_num)
+        self.build_id = int(build_id)
         self.timestamp = timestamp or time.time()
         self.result = result
         self.result_message = result_message
-        self.region = region
-        self.environment = environment
-        self.build_url = build_url
-        self.extra_data = extra_data
 
     @classmethod
-    def from_junit_xml_test_case(cls, case, req, project_id, suite_id):
+    def from_junit_xml_test_case(cls, case, project_id, build_id):
         if case.success:
             result_type = "passed"
         elif case.skipped:
@@ -61,11 +55,8 @@ class Result(BaseModel):
             test_name=case.id(),
             result=result_type,
             project_id=project_id,
-            suite_id=suite_id,
-            build_num=req.get_header('X-Tetra-Build-Num'),
-            environment=req.get_header('X-Tetra-Environment'),
-            build_url=req.get_header('X-Tetra-Build-Url'),
-            region=req.get_header('X-Tetra-Region'),
+            build_id=build_id,
+            result_message=case.trace
         )
 
     @classmethod

@@ -30,30 +30,17 @@ projects_table = Table(
     Column('name', String(256), nullable=False)
 )
 
-suites_table = Table(
-    'suites', metadata,
-    Column('id', Integer, nullable=False, primary_key=True,
-           autoincrement=True),
-    Column('project_id', ForeignKey(projects_table.c.id, ondelete='CASCADE'),
-           nullable=False),
-    Column('name', String(256), nullable=False),
-    Column('description', String(256), nullable=True),
-
-    Index('suite_index', 'project_id', 'id')
-)
-
 builds_table = Table(
     'builds', metadata,
     Column('id', Integer, nullable=False, primary_key=True,
            autoincrement=True),
     Column('project_id', ForeignKey(projects_table.c.id, ondelete='CASCADE'),
            nullable=False),
-    Column('suite_id', ForeignKey(suites_table.c.id, ondelete='CASCADE'),
-           nullable=False),
-    Column('build_num', Integer, nullable=False),
-    Column('timestamp', Integer, nullable=False),
-
-    Index('build_index', 'project_id', 'suite_id', 'build_num')
+    Column('name', String(256), nullable=False),
+    Column('build_url', String(256), nullable=True),
+    Column('region', String(256), nullable=True),
+    Column('environment', String(256), nullable=True),
+    Index('build_index', 'project_id', 'id')
 )
 
 results_table = Table(
@@ -62,19 +49,13 @@ results_table = Table(
            autoincrement=True),
     Column('project_id', ForeignKey(projects_table.c.id, ondelete='CASCADE'),
            nullable=False),
-    Column('suite_id', ForeignKey(suites_table.c.id, ondelete='CASCADE'),
+    Column('build_id', ForeignKey(builds_table.c.id, ondelete='CASCADE'),
            nullable=False),
-    Column('build_num', Integer, nullable=False),
     Column('test_name', String(256), nullable=False),
     Column('timestamp', Integer, nullable=False),
     Column('result', String(256), nullable=False),
     Column('result_message', Text, nullable=True),
-    Column('region', String(256), nullable=True),
-    Column('environment', String(256), nullable=True),
-    Column('build_url', String(256), nullable=True),
-    Column('extra_data', String(512), nullable=True),
-
-    Index('result_index', 'project_id', 'suite_id', 'build_num', 'result')
+    Index('result_index', 'project_id', 'build_id', 'result')
 )
 
 

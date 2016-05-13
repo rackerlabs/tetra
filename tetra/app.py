@@ -17,14 +17,10 @@ import falcon
 
 from api.resources import (
     BuildResource,
-    BuildResultResource,
-    BuildResultsResource,
+    ResultResource,
+    ResultsResource,
     BuildsResource,
     ProjectsResource,
-    SuiteResource,
-    SuiteResultResource,
-    SuiteResultsResource,
-    SuitesResource,
 )
 
 
@@ -32,14 +28,10 @@ class TetraAPI(falcon.API):
 
     RESOURCES = [
         BuildResource(),
-        BuildResultsResource(),
-        BuildResultResource(),
+        ResultsResource(),
+        ResultResource(),
         BuildsResource(),
         ProjectsResource(),
-        SuiteResource(),
-        SuitesResource(),
-        SuiteResultsResource(),
-        SuiteResultResource(),
     ]
 
     def __init__(self):
