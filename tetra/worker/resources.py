@@ -18,7 +18,6 @@ import json
 import falcon
 
 from tetra.worker import tasks
-from tetra.api.resources import Resources, Resource
 
 LOG = logging.getLogger(__name__)
 
