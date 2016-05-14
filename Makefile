@@ -77,9 +77,9 @@ docker-stop:
 
 docker-port:
 ifeq ($(UNAME), Linux)
-	echo API=$(shell $(WITH_DOCKER_ENV) && docker port $(DOCKER_TAG) 7374)
-	echo DB=$(shell $(WITH_DOCKER_ENV) && docker port $(DOCKER_DB_TAG) 5432)
-	echo QUEUE=$(shell $(WITH_DOCKER_ENV) && docker port $(DOCKER_QUEUE_TAG) 5672)
+	@echo API=$(shell $(WITH_DOCKER_ENV) && docker port $(DOCKER_TAG) 7374)
+	@echo DB=$(shell $(WITH_DOCKER_ENV) && docker port $(DOCKER_DB_TAG) 5432)
+	@echo QUEUE=$(shell $(WITH_DOCKER_ENV) && docker port $(DOCKER_QUEUE_TAG) 5672)
 else
 	@echo API=`docker-machine ip $(DOCKER_MACHINE_NAME)`:$(shell \
 		$(WITH_DOCKER_ENV) && docker port $(DOCKER_TAG) 7374 | cut -d':' -f 2 \
