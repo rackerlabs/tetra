@@ -22,6 +22,9 @@ from api.resources import (
     BuildsResource,
     ProjectsResource,
 )
+from worker.resources import (
+    WorkerPingResource,
+)
 
 
 class TetraAPI(falcon.API):
@@ -32,6 +35,7 @@ class TetraAPI(falcon.API):
         ResultResource(),
         BuildsResource(),
         ProjectsResource(),
+        WorkerPingResource(),
     ]
 
     def __init__(self):

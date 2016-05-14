@@ -10,6 +10,19 @@ services:
       - db
     links:
       - db
+    command: |
+      bash -c "export PYTHONUNBUFFERED=1 && gunicorn --reload -t 120 --bind 0.0.0.0:7374 tetra.app:application"
+  worker:
+    image: tetra-api
+    container_name: tetra-worker
+    depends_on:
+      - queue
+    links:
+      - queue
+    # celery has a `--auotreload` flag that doesn't reload dependent modules,
+    # so it doesn't work. use `docker-compose restart worker` instead.
+    command: |
+      su -m tetra-worker -c "celery --app=tetra.worker.app worker --loglevel=INFO"
   db:
     image: postgres:9.5
     container_name: tetra-db
@@ -18,3 +31,12 @@ services:
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: tetra-db
+  queue:
+    image: rabbitmq:3.6-management
+    container_name: tetra-queue
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: tetra
+      RABBITMQ_DEFAULT_PASS: password
