@@ -87,9 +87,18 @@ class ResultClientMixin(BaseClient):
         return requests.delete(url, params=params)
 
 
+class WorkerClientMixin(BaseClient):
+
+    @log_response
+    def workers_ping(self, params=None):
+        url = self.url('workers', 'ping')
+        return requests.get(url, params=params)
+
+
 class TetraClient(
     ProjectClientMixin,
     BuildClientMixin,
     ResultClientMixin,
+    WorkerClientMixin,
 ):
     pass

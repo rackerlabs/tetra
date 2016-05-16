@@ -1,5 +1,9 @@
 services:
     - postgresql
+    # rabbitmq needs sudo in travis, but sudo makes travis checks take forever.
+    # instead, run celery on redis since it doesn't need sudo. hopefully this
+    # will work fine, but it may become an issue since we want to use rabbitmq
+    - redis-server
 
 language: python
 python:
@@ -12,9 +16,7 @@ env:
 install: "pip install tox"
 
 before_script:
-    - psql -c 'create database "tetra-db";' -U postgres
     - ./travis-setup.sh
-    - gunicorn --daemon -t 120 --bind 127.0.0.1:7374 tetra.app:application
 
 script: tox
 
