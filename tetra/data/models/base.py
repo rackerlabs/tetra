@@ -14,7 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 from tetra.config import cfg
+from tetra.data import sql
 from tetra.data.db_handler import get_handler
+
+from sqlalchemy import and_, text
 
 conf = cfg.CONF
 
@@ -32,6 +35,8 @@ class DictSerializer(object):
 class BaseModel(DictSerializer):
 
     TABLE = None
+    RESOURCE_TAGS_TABLE = None
+    TAGS_TABLE = sql.tags_table
 
     @classmethod
     def create(cls, resource, handler=None):
@@ -44,12 +49,13 @@ class BaseModel(DictSerializer):
         return handler.create_many(resources)
 
     @classmethod
-    def get(cls, resource_id, handler=None, **kwargs):
+    def get(cls, resource_id, handler=None):
         handler = handler or get_handler()
         return handler.get(resource_id=resource_id, resource_class=cls)
 
     @classmethod
     def _and_clause(cls, **kwargs):
+        kwargs = dict((k, v) for k, v in kwargs.iteritems() if v)
         and_clause = None
         for key, value in kwargs.items():
             if and_clause is None:
