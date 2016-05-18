@@ -46,8 +46,11 @@ class Build(BaseModel):
         handler = handler or get_handler()
         if kwargs:
             joined_table = cls.TABLE.outerjoin(
-                cls.RESOURCE_TAGS_TABLE, and_(cls.TABLE.c.id == cls.RESOURCE_TAGS_TABLE.c.build_id)
-            ).outerjoin(cls.TAGS_TABLE, and_(cls.RESOURCE_TAGS_TABLE.c.tag_id == cls.TAGS_TABLE.c.id))
+                cls.RESOURCE_TAGS_TABLE,
+                and_(cls.TABLE.c.id == cls.RESOURCE_TAGS_TABLE.c.build_id)
+            ).outerjoin(
+                cls.TAGS_TABLE,
+                and_(cls.RESOURCE_TAGS_TABLE.c.tag_id == cls.TAGS_TABLE.c.id))
 
             joined_table = select([
                 cls.TABLE,
@@ -55,11 +58,15 @@ class Build(BaseModel):
                 cls.TAGS_TABLE.c.value,
             ]).select_from(joined_table)
 
+            builds_and_clause = cls._and_clause(
+                project_id=project_id, name=name,
+                build_url=build_url, region=region, environment=environment)
             tables = []
             for i, (key, value) in enumerate(kwargs.iteritems(), 1):
                 alias = "t%s" % i
                 tag_and_clause = Tag._and_clause(key=key, value=value)
-                table = joined_table.where(tag_and_clause).alias(alias)
+                full_and_clause = and_(tag_and_clause, builds_and_clause)
+                table = joined_table.where(full_and_clause).alias(alias)
                 tables.append(table)
 
             mega_table = tables[0]
