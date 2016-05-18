@@ -22,7 +22,7 @@ from tetra.data.db_handler import get_handler
 
 from tetra.data.models.tags import Tag
 
-from sqlalchemy import and_, text
+from sqlalchemy import and_, text, select
 
 class Build(BaseModel):
 
@@ -49,25 +49,25 @@ class Build(BaseModel):
                 cls.RESOURCE_TAGS_TABLE, and_(cls.TABLE.c.id == cls.RESOURCE_TAGS_TABLE.c.build_id)
             ).outerjoin(cls.TAGS_TABLE, and_(cls.RESOURCE_TAGS_TABLE.c.tag_id == cls.TAGS_TABLE.c.id))
 
-            builds_and_clause = cls._and_clause(
-                project_id=project_id, name=name,
-                build_url=build_url, region=region, environment=environment)
+            joined_table = select([
+                cls.TABLE,
+                cls.TAGS_TABLE.c.key,
+                cls.TAGS_TABLE.c.value,
+            ]).select_from(joined_table)
 
             tables = []
-            for key, value in kwargs.iteritems():
+            for i, (key, value) in enumerate(kwargs.iteritems(), 1):
+                alias = "t%s" % i
                 tag_and_clause = Tag._and_clause(key=key, value=value)
-                table = joined_table.select(
-                    cls.RESOURCE_TAGS_TABLE.c.build_id,
-                ).where(tag_and_clause).alias("boo")
+                table = joined_table.where(tag_and_clause).alias(alias)
                 tables.append(table)
 
             mega_table = tables[0]
-            for table in tables[1:]:
-                mega_table = mega_table.join(table)
+            for i, table in enumerate(tables[1:], 2):
+                mega_table = mega_table.join(table, text("t1.id = t%s.id" % i))
 
-            print mega_table
             query = mega_table.select()
-            query = query.order_by(cls.TABLE.c.id)
+            query = query.order_by(text("t1.id"))
 
             return handler.get_all(resource_class=cls, query=query,
                                    limit=limit, offset=offset)
