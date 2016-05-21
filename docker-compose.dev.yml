@@ -6,3 +6,6 @@ services:
   worker:
     volumes:
       - .:/tetra
+  ui:
+    volumes:
+      - ./ui/:/usr/share/nginx/html
