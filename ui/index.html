@@ -1,21 +1,66 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <title>tetra</title>
+    <meta charset="utf-8" name="viewport" content="width=device-width">
+    <title>Tetra</title>
     <!-- this gets our favicon to refresh when changed -->
     <!-- icon is from http://www.iconsdb.com/custom-color/fish-icon.html -->
     <link rel="icon" href="/favicon.ico?">
     <link rel="stylesheet" href="https://eafdbc63c97ce6bec9ef-b0a668e5876bef6fe25684caf71db405.ssl.cf1.rackcdn.com/v1.8.0/canon.min.css">
+    <script type="application/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
     <script src="https://eafdbc63c97ce6bec9ef-b0a668e5876bef6fe25684caf71db405.ssl.cf1.rackcdn.com/v1.8.0/canon.min.js"></script>
-    <script src="/node_modules/react/dist/react.min.js"></script>
-    <script src="/node_modules/react-dom/dist/react-dom.min.js"></script>
-    <script src="/node_modules/canon-react/dist/canon-react.min.js"></script>
   </head>
-  <body>
-    <div class="rs-main">
-      <div class="rs-content rs-panel rs-inner" id="content"></div>
+
+  <body class="rs-responsive">
+    <div class="rs-wrapper">
+
+      <!-- navbar -->
+      <div class="rs-nav-utility">
+        <div class="rs-container">
+          <ul class="rs-nav">
+            <li class="rs-nav-item"><a class="rs-nav-link" href="/">Tetra</a></li>
+          </ul>
+          <ul class="rs-nav rs-pull-right">
+            <li class="rs-nav-item"><a class="rs-nav-link" href="#">Account: Username123</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- content area -->
+      <div class="rs-body">
+        <div class="rs-container">
+          <div class="rs-main">
+            <div class="rs-content rs-panel">
+              <div class="rs-inner" id="content"></div>
+            </div>
+          </div>
+        </div>
+        <div class="rs-push"></div>
+      </div>
+
+      <!-- footer -->
+      <div class="rs-nav-footer">
+        <div class="rs-container">
+          <ul class="rs-nav">
+            <li class="rs-nav-item">&copy; 2016 Rackspace</li>
+          </ul>
+          <ul class="rs-nav rs-pull-right">
+            <li class="rs-nav-item">
+              <a class="rs-nav-link" href="https://github.com/rackerlabs/tetra">Github</a>
+            </li>
+            <li class="rs-nav-item">
+              <a class="rs-nav-link" href="https://github.com/rackerlabs/tetra/issues">Issues</a>
+            </li>
+            <li class="rs-nav-item">
+              <a class="rs-nav-link" href="https://github.com/rackerlabs/tetra/blob/master/README.md">Docs</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
     </div>
-    <script src="/dist/main.js"></script>
+
+
+    <script src="/dist/tetra.bundle.js"></script>
   </body>
 </html>

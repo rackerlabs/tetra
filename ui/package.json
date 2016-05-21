@@ -2,7 +2,7 @@
   "name": "tetra-ui",
   "version": "1.0.0",
   "description": "the dashboard for tetra",
-  "main": "app.js",
+  "main": "app/main.js",
   "dependencies": {
     "canon-react": "^0.11.1",
     "react": "^15.1.0",
@@ -11,11 +11,14 @@
   "devDependencies": {
     "babel-cli": "^6.9.0",
     "babel-preset-es2015": "^6.9.0",
-    "babel-preset-react": "^6.5.0"
+    "babel-preset-react": "^6.5.0",
+    "webpack": "^1.13.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel app -d dist"
+    "build": "scripts/build.sh",
+    "build-watch": "scripts/build-watch.sh"
+
   },
   "babel": {
     "presets": [
