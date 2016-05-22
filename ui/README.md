@@ -131,9 +131,10 @@ One of these features is modules, which lets us write code like:
 
     import React from 'react';
 
-Babel compiles imports to certain JavaScript statements that a bundler
-understands. The bundler will read the imports, find all the dependent js
-files, and spit out one, unified js file that we include in our
+Babel compiles import statements to different statements that a bundler can
+understand. The bundler reads the imports, finds all the dependent js files,
+and merges them into one, unified js file. We then include this single js file
+in our html.
 
 In our case, the bundler is [webpack](https://webpack.github.io/). When you
 invoke `npm run build`, babel will run first, followed by webpack. Webpack
