@@ -17,8 +17,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "scripts/build.sh",
-    "build-watch": "scripts/build-watch.sh"
-
+    "autobuild": "scripts/autobuild.sh"
   },
   "babel": {
     "presets": [
