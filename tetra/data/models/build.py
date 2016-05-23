@@ -42,6 +42,7 @@ class Build(BaseModel):
                 **kwargs):
         handler = handler or get_handler()
         if kwargs:
+            # Create a table that joins the builds, build tags, and tags
             joined_table = cls.TABLE.outerjoin(
                 cls.RESOURCE_TAGS_TABLE,
                 and_(cls.TABLE.c.id == cls.RESOURCE_TAGS_TABLE.c.build_id)
@@ -49,15 +50,19 @@ class Build(BaseModel):
                 cls.TAGS_TABLE,
                 and_(cls.RESOURCE_TAGS_TABLE.c.tag_id == cls.TAGS_TABLE.c.id))
 
+            # Select only the build info and the key/value tag pairs
             joined_table_select = select([
                 cls.TABLE,
                 cls.TAGS_TABLE.c.key,
                 cls.TAGS_TABLE.c.value,
             ]).select_from(joined_table)
 
+            # Query for the non-tag values as well
             builds_and_clause = cls._and_clause(
                 project_id=project_id, name=name,
                 build_url=build_url, region=region, environment=environment)
+
+            # Create a table for each tag we're looking for
             tables = []
             for i, (key, value) in enumerate(kwargs.iteritems(), 1):
                 alias = "t%s" % i
@@ -66,43 +71,50 @@ class Build(BaseModel):
                 table = joined_table_select.where(full_and_clause).alias(alias)
                 tables.append(table)
 
-            mega_table = tables[0]
+            # Join all the tag tables together to determine which builds have
+            # all the desired tags
+            desired_builds_table = tables[0]
             for i, table in enumerate(tables[1:], 2):
-                mega_table = mega_table.join(table, text("t1.id = t%s.id" % i))
+                desired_builds_table = desired_builds_table.join(
+                    table, text("t1.id = t%s.id" % i))
 
-            query = mega_table.select()
-            query = query.order_by(text("t1.id"))
-            builds = handler.get_all(resource_class=cls, query=query,
-                                     limit=limit, offset=offset)
-
-            mega_table_w_tags = mega_table.join(
+            # Get all tags for each build that has the desired tags
+            # 1.) Join table with desired builds with builds tags table
+            # to determine what build tags we care about
+            # 2.) Join that table with the tags table to get the key/values
+            joined_table_w_tags = desired_builds_table.join(
                 cls.RESOURCE_TAGS_TABLE, and_(
                     text("t1.id") == cls.RESOURCE_TAGS_TABLE.c.build_id)
             ).join(
                 cls.TAGS_TABLE,
                 and_(cls.RESOURCE_TAGS_TABLE.c.tag_id == cls.TAGS_TABLE.c.id)
-            ).join(
-                cls.TABLE,
-                and_(cls.RESOURCE_TAGS_TABLE.c.build_id == cls.TABLE.c.id)
-            ).alias("ultimate_table")
+            ).alias("joined_table_w_tags")
 
-            second_query = mega_table_w_tags.select()
-
+            tags_query = joined_table_w_tags.select()
             build_tag_combinations = handler.get_all(
-                resource_class=cls, query=second_query,
+                resource_class=cls, query=tags_query,
                 limit=limit, offset=offset)
 
+            # Map tag key/value pairs to build ids
             build_tags = {}
             for build in build_tag_combinations:
-                if build_tags.get(build.get("builds_id")):
-                    tags = build_tags[build.get("builds_id")]
+                if build_tags.get(build.get("build_tags_build_id")):
+                    tags = build_tags[build.get("build_tags_build_id")]
                     tags[build.get("tags_key")] = build.get("tags_value")
-                    build_tags[build.get("builds_id")] = tags
+                    build_tags[build.get("build_tags_build_id")] = tags
                 else:
-                    build_tags[build.get("builds_id")] = {
+                    build_tags[build.get("build_tags_build_id")] = {
                         build.get("tags_key"): build.get("tags_value")}
+
+            # Get desired builds and add their tags before returning
+            query = desired_builds_table.select()
+            query = query.order_by(text("t1.id"))
+            builds = handler.get_all(resource_class=cls, query=query,
+                                     limit=limit, offset=offset)
             for build in builds:
                 build["tags"] = build_tags.get(build.get("id"))
+                del build["key"]
+                del build["value"]
             return builds
         else:
             return super(Build, cls).get_all(
