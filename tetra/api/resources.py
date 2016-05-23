@@ -21,7 +21,7 @@ import xunitparser
 from tetra.data.models.build import Build
 from tetra.data.models.project import Project
 from tetra.data.models.result import Result
-from tetra.data.models.tags import Tag, BuildTag, ResultTag
+from tetra.data.models.tags import Tag, BuildTag
 
 
 def make_error_body(msg):
@@ -80,7 +80,6 @@ class BuildsResource(Resources):
     RESOURCE_CLASS = Build
 
     def on_post(self, req, resp, **kwargs):
-        # super(BuildsResource, self).on_post(req, resp, **kwargs)
         resp.status = falcon.HTTP_201
         data = req.stream.read()
         data_dict = json.loads(data)

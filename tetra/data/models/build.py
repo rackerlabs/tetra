@@ -13,16 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from tetra.data import sql
-from tetra.data.models.base import BaseModel
+from sqlalchemy import and_, text, select
 
-from tetra.config import cfg
 from tetra.data import sql
 from tetra.data.db_handler import get_handler
-
+from tetra.data.models.base import BaseModel
 from tetra.data.models.tags import Tag
 
-from sqlalchemy import and_, text, select
 
 class Build(BaseModel):
 
@@ -52,7 +49,7 @@ class Build(BaseModel):
                 cls.TAGS_TABLE,
                 and_(cls.RESOURCE_TAGS_TABLE.c.tag_id == cls.TAGS_TABLE.c.id))
 
-            joined_table = select([
+            joined_table_select = select([
                 cls.TABLE,
                 cls.TAGS_TABLE.c.key,
                 cls.TAGS_TABLE.c.value,
@@ -66,7 +63,7 @@ class Build(BaseModel):
                 alias = "t%s" % i
                 tag_and_clause = Tag._and_clause(key=key, value=value)
                 full_and_clause = and_(tag_and_clause, builds_and_clause)
-                table = joined_table.where(full_and_clause).alias(alias)
+                table = joined_table_select.where(full_and_clause).alias(alias)
                 tables.append(table)
 
             mega_table = tables[0]
@@ -75,10 +72,38 @@ class Build(BaseModel):
 
             query = mega_table.select()
             query = query.order_by(text("t1.id"))
+            builds = handler.get_all(resource_class=cls, query=query,
+                                     limit=limit, offset=offset)
 
-            return handler.get_all(resource_class=cls, query=query,
-                                   limit=limit, offset=offset)
+            mega_table_w_tags = mega_table.join(
+                cls.RESOURCE_TAGS_TABLE, and_(
+                    text("t1.id") == cls.RESOURCE_TAGS_TABLE.c.build_id)
+            ).join(
+                cls.TAGS_TABLE,
+                and_(cls.RESOURCE_TAGS_TABLE.c.tag_id == cls.TAGS_TABLE.c.id)
+            ).join(
+                cls.TABLE,
+                and_(cls.RESOURCE_TAGS_TABLE.c.build_id == cls.TABLE.c.id)
+            ).alias("ultimate_table")
 
+            second_query = mega_table_w_tags.select()
+
+            build_tag_combinations = handler.get_all(
+                resource_class=cls, query=second_query,
+                limit=limit, offset=offset)
+
+            build_tags = {}
+            for build in build_tag_combinations:
+                if build_tags.get(build.get("builds_id")):
+                    tags = build_tags[build.get("builds_id")]
+                    tags[build.get("tags_key")] = build.get("tags_value")
+                    build_tags[build.get("builds_id")] = tags
+                else:
+                    build_tags[build.get("builds_id")] = {
+                        build.get("tags_key"): build.get("tags_value")}
+            for build in builds:
+                build["tags"] = build_tags.get(build.get("id"))
+            return builds
         else:
             return super(Build, cls).get_all(
                 handler=handler, limit=limit, offset=offset,

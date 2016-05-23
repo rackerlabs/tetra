@@ -17,7 +17,6 @@ from tetra.config import cfg
 from tetra.data import sql
 from tetra.data.db_handler import get_handler
 
-from sqlalchemy import and_, text
 
 conf = cfg.CONF
 
