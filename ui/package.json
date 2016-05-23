@@ -5,8 +5,8 @@
   "main": "app/main.js",
   "dependencies": {
     "canon-react": "^0.11.1",
-    "react": "^15.1.0",
-    "react-dom": "^15.1.0"
+    "react": "~0.14.8",
+    "react-dom": "~0.14.8"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",

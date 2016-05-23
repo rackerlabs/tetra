@@ -10,12 +10,16 @@ quickstart
 
 First, install dependencies with npm and build the code:
 
+    ### npm commands are run where package.json is located
+    $ cd ./ui
     $ npm install
     $ npm run build
 
 The tetra dashboard starts up with the rest of the docker containers. From the
 root of this repository run:
 
+    ### make commands are run where the makefile is located
+    $ cd ..
     $ make docker-build
     $ make docker-dev
 
