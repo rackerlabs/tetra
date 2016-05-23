@@ -84,8 +84,9 @@ class BuildsResource(Resources):
         data = req.stream.read()
         data_dict = json.loads(data)
         data_dict.update(kwargs)
-        tags_data = data_dict.get("tags")
-        if tags_data:
+        tags_data = None
+        if "tags" in data_dict:
+            tags_data = data_dict.get("tags")
             del data_dict["tags"]
         resource = self.RESOURCE_CLASS.from_dict(data_dict)
         created_resource = self.RESOURCE_CLASS.create(resource=resource)
