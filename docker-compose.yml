@@ -40,3 +40,12 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: tetra
       RABBITMQ_DEFAULT_PASS: password
+  ui:
+    build:
+      context: ./ui
+    image: tetra-ui
+    container_name: tetra-ui
+    ports:
+      - "7375:80"
+    depends_on:
+      - api

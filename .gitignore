@@ -6,3 +6,4 @@ tetra.conf
 .cache/
 tetra-test.conf
 .tox/
+npm-debug.log

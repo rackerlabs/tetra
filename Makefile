@@ -8,6 +8,7 @@ DOCKER_TAG := tetra-api
 DOCKER_WORKER_TAG := tetra-worker
 DOCKER_DB_TAG := tetra-db
 DOCKER_QUEUE_TAG := tetra-queue
+DOCKER_UI_TAG := tetra-ui
 
 # set some variables for docker-machine, which we need outside of Linux
 ifeq ($(UNAME), Linux)
@@ -34,7 +35,8 @@ help:
 	@echo '  docker-queue               - run the rabbitmq docker container in background ($(DOCKER_QUEUE_TAG))'
 	@echo '  docker-logs                - follow the logs from all containers'
 	@echo '  docker-ps                  - list running docker containers'
-	@echo '  docker-stop                - stop and rm the containers ($(DOCKER_TAG), $(DOCKER_DB_TAG))'
+	@echo '  docker-stop                - stop the containers'
+	@echo '  docker-down                - stop and remove the containers'
 	@echo '  docker-port                - display the real <ip>:<port> for different containers'
 	@echo '  docker-machine-create      - start the boot2docker vm ($(DOCKER_MACHINE_NAME))'
 	@echo '                               NOTE: this is a no-op on linux.'
@@ -55,7 +57,7 @@ docker-build: docker-machine-create
 	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml build
 
 docker-dev:
-	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up api worker
+	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up api worker ui
 
 docker-restart-worker:
 	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart worker
@@ -75,11 +77,15 @@ docker-ps:
 docker-stop:
 	$(WITH_DOCKER_ENV) && docker-compose stop
 
+docker-down:
+	$(WITH_DOCKER_ENV) && docker-compose down
+
 docker-port:
 ifeq ($(UNAME), Linux)
 	@echo API=$(shell $(WITH_DOCKER_ENV) && docker port $(DOCKER_TAG) 7374)
 	@echo DB=$(shell $(WITH_DOCKER_ENV) && docker port $(DOCKER_DB_TAG) 5432)
 	@echo QUEUE=$(shell $(WITH_DOCKER_ENV) && docker port $(DOCKER_QUEUE_TAG) 5672)
+	@echo UI=$(shell $(WITH_DOCKER_ENV) && docker port $(DOCKER_UI_TAG) 80)
 else
 	@echo API=`docker-machine ip $(DOCKER_MACHINE_NAME)`:$(shell \
 		$(WITH_DOCKER_ENV) && docker port $(DOCKER_TAG) 7374 | cut -d':' -f 2 \
@@ -89,6 +95,9 @@ else
 	)
 	@echo QUEUE=`docker-machine ip $(DOCKER_MACHINE_NAME)`:$(shell \
 		$(WITH_DOCKER_ENV) && docker port $(DOCKER_QUEUE_TAG) 5672 | cut -d':' -f 2 \
+	)
+	@echo UI=`docker-machine ip $(DOCKER_MACHINE_NAME)`:$(shell \
+		$(WITH_DOCKER_ENV) && docker port $(DOCKER_UI_TAG) 80 | cut -d':' -f 2 \
 	)
 endif
 
