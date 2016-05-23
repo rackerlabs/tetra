@@ -1,3 +1,5 @@
+import unittest
+
 from tests.base import BaseTetraTest
 
 
@@ -19,6 +21,7 @@ class TestBuilds(BaseTetraTest):
         self.assertEqual(resp.status_code, 200)
         self.assertGreater(len(resp.json()), 0)
 
+    @unittest.skip("Skipping until tags are returned on GET")
     def test_get_build(self):
         resp = self.client.get_build(self.project_id, self.build['id'])
         self.assertEqual(resp.status_code, 200)

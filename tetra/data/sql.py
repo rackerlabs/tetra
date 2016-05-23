@@ -13,7 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from sqlalchemy import Table, Column, MetaData, ForeignKey, Index
+from sqlalchemy import (Table, Column, MetaData, ForeignKey, Index,
+                        UniqueConstraint)
 from sqlalchemy import Integer, String, Text
 
 from sqlalchemy import create_engine
@@ -56,6 +57,31 @@ results_table = Table(
     Column('result', String(256), nullable=False),
     Column('result_message', Text, nullable=True),
     Index('result_index', 'project_id', 'build_id', 'result')
+)
+
+build_tags_table = Table(
+    'build_tags', metadata,
+    Column('id', Integer, nullable=False, primary_key=True,
+           autoincrement=True),
+    Column('build_id', Integer, nullable=False),
+    Column('tag_id', Integer, nullable=False),
+)
+
+result_tags_table = Table(
+    'result_tags', metadata,
+    Column('id', Integer, nullable=False, primary_key=True,
+           autoincrement=True),
+    Column('result_id', Integer, nullable=False),
+    Column('tag_id', Integer, nullable=False),
+)
+
+tags_table = Table(
+    'tags', metadata,
+    Column('id', Integer, nullable=False, primary_key=True,
+           autoincrement=True),
+    Column('key', Text, nullable=False),
+    Column('value', Text, nullable=False),
+    UniqueConstraint('key', 'value')
 )
 
 
