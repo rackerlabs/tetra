@@ -86,6 +86,6 @@ tags_table = Table(
 
 
 def db_connect(database_dict):
-    engine = create_engine(URL(**database_dict), echo=True)
+    engine = create_engine(URL(**database_dict))
     metadata.create_all(engine)
     return engine
