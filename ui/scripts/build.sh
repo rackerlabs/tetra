@@ -14,7 +14,7 @@ function run_babel() {
 }
 
 function run_webpack() {
-    webpack $1 --optimize-minimize
+    webpack $1  # --optimize-minimize
 
 }
 
