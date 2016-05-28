@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Landing from './landing';
+import ProjectsView from './projects-view';
+import BuildsView from './builds-view';
 
 (function() {
     ReactDOM.render(
-        <Landing />,
+        <ProjectsView />,
         document.getElementById('content')
     );
 })();

@@ -1,11 +1,11 @@
 import React from 'react';
 import ProjectsTable from './projects-table';
 
-var Landing = React.createClass({
+var ProjectsView = React.createClass({
 
     getInitialState: function() {
         return {
-            projects: [{id: 1, name: "poo", pee: "wumbo"}],
+            projects: [],
         }
     },
 
@@ -23,10 +23,13 @@ var Landing = React.createClass({
 
     render: function() {
         return (
-            <ProjectsTable projects={this.state.projects} />
+            <div>
+                <h2 className="rs-page-title">Projects</h2>
+                <ProjectsTable projects={this.state.projects} />
+            </div>
         );
     },
 
 });
 
-export default Landing;
+export default ProjectsView;
