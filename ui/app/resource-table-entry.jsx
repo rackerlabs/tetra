@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 var ResourceTableEntry = React.createClass({
 
@@ -21,7 +22,9 @@ var ResourceTableEntry = React.createClass({
         for (var i = 0; i < columnKeys.length; i++) {
             var val = resource[columnKeys[i]];
             result.push(
-                <td key={i}> {val} </td>
+                <td key={i} className="rs-table-link">
+                    <Link to={this.props.link}> {val} </Link>
+                </td>
             );
         }
         return result;

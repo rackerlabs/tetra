@@ -9,8 +9,12 @@ var BuildsView = React.createClass({
         }
     },
 
+    projectId: function() {
+        return this.props.params.project_id || this.props.project_id;
+    },
+
     componentDidMount: function() {
-        var url = "/api/" + this.props.project_id + "/builds";
+        var url = "/api/" + this.projectId() + "/builds";
         this.buildsRequest = $.get(url, function(result) {
             this.setState({
                 builds: result
