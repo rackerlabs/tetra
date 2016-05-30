@@ -39,16 +39,12 @@ var ResourceTable = React.createClass({
     },
 
     tableEntries: function(resources, columnKeys) {
-        var getRoute = this.props.getRoute;
+        var columnLinks = this.props.columnLinks;
         var entries = resources.map(function(resource, i) {
-            var link = '';
-            if (getRoute) {
-                link = getRoute(resource);
-            }
             return <ResourceTableEntry key={i}
                                        resource={resource}
                                        columnKeys={columnKeys}
-                                       link={link} />
+                                       columnLinks={columnLinks} />
         });
         return (<tbody>{entries}</tbody>);
     },

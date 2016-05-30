@@ -11,12 +11,18 @@ var ResultsTable = React.createClass({
         "id", "build_id", "project_id", "result", "result_message",
         "test_name", "timestamp",
     ],
+    columnLinks: {
+        project_id: function(r) {
+            return "/" + r.project_id + "/builds";
+        },
+    },
 
     render: function() {
         return (
             <ResourceTable resources={this.props.results}
                            columnTitles={this.columnTitles}
-                           columnKeys={this.columnKeys} />
+                           columnKeys={this.columnKeys}
+                           columnLinks={this.columnLinks} />
         );
     },
 

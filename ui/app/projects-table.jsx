@@ -5,18 +5,22 @@ var ProjectsTable = React.createClass({
 
     columnTitles: ["Id", "Name"],
     columnKeys: ["id", "name"],
+    columnLinks: {
+        "name": function(project) {
+            return "/" + project.id + "/builds";
+        },
+        "id": function(project) {
+            return "/" + project.id + "/builds";
+        },
+    },
 
     render: function() {
         return (
             <ResourceTable resources={this.props.projects}
                            columnTitles={this.columnTitles}
                            columnKeys={this.columnKeys}
-                           getRoute={this.getRoute} />
+                           columnLinks={this.columnLinks} />
         );
-    },
-
-    getRoute: function(project) {
-        return "/" + project.id + "/builds";
     },
 
 });
