@@ -3,13 +3,13 @@ import ResourceTable from './resource-table';
 
 var ProjectsTable = React.createClass({
 
-    // these are used as a column title. they are lowercased to access the
-    // field on the project resource - project["id"], project["name"]
-    columnKeys: ["Id", "Name"],
+    columnTitles: ["Id", "Name"],
+    columnKeys: ["id", "name"],
 
     render: function() {
         return (
             <ResourceTable resources={this.props.projects}
+                           columnTitles={this.columnTitles}
                            columnKeys={this.columnKeys}
                            getRoute={this.getRoute} />
         );

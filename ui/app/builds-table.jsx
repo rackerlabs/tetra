@@ -3,13 +3,17 @@ import ResourceTable from './resource-table';
 
 var BuildsTable = React.createClass({
 
+    columnTitles: [
+        "Id", "Project Id", "Name", "Build Url", "Region", "Environment",
+    ],
     columnKeys: [
-        "Id", "Project_id", "Name", "Build_url", "Region", "Environment"
+        "id", "project_id", "name", "build_url", "region", "environment",
     ],
 
     render: function() {
         return (
             <ResourceTable resources={this.props.builds}
+                           columnTitles={this.columnTitles}
                            columnKeys={this.columnKeys}
                            getRoute={this.getRoute} />
         );

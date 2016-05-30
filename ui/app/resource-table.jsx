@@ -4,7 +4,7 @@ import ResourceTableEntry from './resource-table-entry';
 var ResourceTable = React.createClass({
 
     render: function() {
-        var headers = this.tableHeaders(this.props.columnKeys);
+        var headers = this.tableHeaders(this.props.columnTitles);
         var entries = this.tableEntries(this.props.resources,
                                         this.props.columnKeys);
         return (
