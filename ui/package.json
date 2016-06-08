@@ -6,7 +6,8 @@
   "dependencies": {
     "canon-react": "^0.11.1",
     "react": "~0.14.8",
-    "react-dom": "~0.14.8"
+    "react-dom": "~0.14.8",
+    "react-router": "^2.4.1"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",
@@ -17,7 +18,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "scripts/build.sh",
-    "autobuild": "scripts/autobuild.sh"
+    "autobuild": "scripts/build.sh watch"
   },
   "babel": {
     "presets": [
