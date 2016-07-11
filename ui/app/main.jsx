@@ -8,9 +8,9 @@ import ResultsView from './results-view';
 (function() {
     ReactDOM.render(
         <Router history={browserHistory}>
-            <Route path="/" component={ProjectsView} />
-            <Route path="/:project_id/builds" component={BuildsView} />
-            <Route path="/:project_id/builds/:build_id/results" component={ResultsView} />
+            <Route path="/projects" component={ProjectsView} />
+            <Route path="/projects/:project_id/builds" component={BuildsView} />
+            <Route path="/projects/:project_id/builds/:build_id/results" component={ResultsView} />
         </Router>,
         document.getElementById('content')
     );

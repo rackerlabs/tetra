@@ -7,10 +7,10 @@ var ProjectsTable = React.createClass({
     columnKeys: ["id", "name"],
     columnLinks: {
         "name": function(project) {
-            return "/" + project.id + "/builds";
+            return "/projects/" + project.id + "/builds";
         },
         "id": function(project) {
-            return "/" + project.id + "/builds";
+            return "/projects/" + project.id + "/builds";
         },
     },
 

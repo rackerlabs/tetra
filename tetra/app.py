@@ -21,6 +21,7 @@ from api.resources import (
     ResultsResource,
     BuildsResource,
     ProjectsResource,
+    VersionResource
 )
 from worker.resources import (
     WorkerPingResource,
@@ -35,6 +36,7 @@ class TetraAPI(falcon.API):
         ResultResource(),
         BuildsResource(),
         ProjectsResource(),
+        VersionResource(),
         WorkerPingResource(),
     ]
 

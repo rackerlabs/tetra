@@ -13,7 +13,7 @@ var ResultsTable = React.createClass({
     ],
     columnLinks: {
         project_id: function(r) {
-            return "/" + r.project_id + "/builds";
+            return "/projects/" + r.project_id + "/builds";
         },
     },
 
