@@ -27,6 +27,11 @@ class TestResults(BaseResultTest):
         )
         self.result_id = self.create_resp.json()['id']
 
+    def test_list_project_results(self):
+        resp = self.client.list_project_results(self.project_id)
+        self.assertEqual(resp.status_code, 200)
+        self.assertGreater(len(resp.json()), 0)
+
     def test_list_results(self):
         resp = self.client.list_results(self.project_id, self.build_id)
         self.assertEqual(resp.status_code, 200)

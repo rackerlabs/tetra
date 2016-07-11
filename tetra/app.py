@@ -20,6 +20,7 @@ from api.resources import (
     BuildResource,
     ResultResource,
     ResultsResource,
+    ProjectResultsResource,
     BuildsResource,
     ProjectsResource
 )
@@ -50,6 +51,7 @@ class TetraAPI(falcon.API):
         BuildResource(),
         ResultsResource(),
         ResultResource(),
+        ProjectResultsResource(),
         BuildsResource(),
         ProjectsResource(),
         VersionResource(),
