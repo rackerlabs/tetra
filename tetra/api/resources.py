@@ -114,6 +114,11 @@ class BuildResource(Resource):
     RESOURCE_ID_KEY = "build_id"
 
 
+class ProjectResultsResource(Resources):
+    ROUTE = "/projects/{project_id}/results"
+    RESOURCE_CLASS = Result
+
+
 class ResultsResource(Resources):
     ROUTE = "/projects/{project_id}/builds/{build_id}/results"
     RESOURCE_CLASS = Result

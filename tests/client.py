@@ -66,6 +66,11 @@ class BuildClientMixin(BaseClient):
 class ResultClientMixin(BaseClient):
 
     @log_response
+    def list_project_results(self, project_id, params=None):
+        url = self.url('/projects', project_id, '/results')
+        return requests.get(url, params=params)
+
+    @log_response
     def list_results(self, project_id, build_id, params=None):
         url = self.url('/projects', project_id,
                        '/builds', build_id, '/results')
