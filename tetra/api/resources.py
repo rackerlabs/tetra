@@ -72,27 +72,6 @@ class Resource(object):
         self.RESOURCE_CLASS.delete(resource_id=resource_id)
 
 
-class VersionResource(Resources):
-    ROUTE = "/"
-
-    def on_get(self, req, resp):
-        resp.status = falcon.HTTP_200
-        # build a json response based on all ROUTE
-        routes = [self.get_route(cl) for cl in
-                  inspect.getmembers(sys.modules[__name__], inspect.isclass)
-                  if self.get_route(cl) is not None]
-
-        version = {
-                'version': 'v1',
-                'resources': routes
-                }
-        resp.body = json.dumps(version)
-
-    def get_route(self, cl):
-        if cl[0].endswith('Resource') and hasattr(cl[1], 'ROUTE'):
-            return cl[1].ROUTE
-
-
 class ProjectsResource(Resources):
     ROUTE = "/projects"
     RESOURCE_CLASS = Project
