@@ -16,8 +16,6 @@ limitations under the License.
 import falcon
 import json
 
-import inspect
-import sys
 import xunitparser
 
 from tetra.data.models.build import Build
