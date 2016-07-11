@@ -14,17 +14,34 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import falcon
+import json
 
 from api.resources import (
     BuildResource,
     ResultResource,
     ResultsResource,
     BuildsResource,
-    ProjectsResource,
+    ProjectsResource
 )
 from worker.resources import (
     WorkerPingResource,
 )
+
+
+class VersionResource(object):
+    ROUTE = "/"
+
+    def on_get(self, req, resp):
+        resp.status = falcon.HTTP_200
+        # build a json response based on all ROUTE
+        routes = [cl.ROUTE for cl in
+                  TetraAPI.RESOURCES]
+
+        version = {
+                'version': 'v1',
+                'resources': routes
+                }
+        resp.body = json.dumps(version)
 
 
 class TetraAPI(falcon.API):
@@ -35,6 +52,7 @@ class TetraAPI(falcon.API):
         ResultResource(),
         BuildsResource(),
         ProjectsResource(),
+        VersionResource(),
         WorkerPingResource(),
     ]
 

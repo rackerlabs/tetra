@@ -14,7 +14,7 @@ var BuildsView = React.createClass({
     },
 
     componentDidMount: function() {
-        var url = "/api/" + this.projectId() + "/builds";
+        var url = "/api/projects/" + this.projectId() + "/builds";
         this.buildsRequest = $.get(url, function(result) {
             this.setState({
                 builds: result

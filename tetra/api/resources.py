@@ -76,7 +76,7 @@ class ProjectsResource(Resources):
 
 
 class BuildsResource(Resources):
-    ROUTE = "/{project_id}/builds"
+    ROUTE = "/projects/{project_id}/builds"
     RESOURCE_CLASS = Build
 
     def on_post(self, req, resp, **kwargs):
@@ -109,13 +109,13 @@ class BuildsResource(Resources):
 
 
 class BuildResource(Resource):
-    ROUTE = "/{project_id}/builds/{build_id}"
+    ROUTE = "/projects/{project_id}/builds/{build_id}"
     RESOURCE_CLASS = Build
     RESOURCE_ID_KEY = "build_id"
 
 
 class ResultsResource(Resources):
-    ROUTE = "/{project_id}/builds/{build_id}/results"
+    ROUTE = "/projects/{project_id}/builds/{build_id}/results"
     RESOURCE_CLASS = Result
 
     def on_post(self, req, resp, **kwargs):
@@ -139,6 +139,6 @@ class ResultsResource(Resources):
 
 
 class ResultResource(Resource):
-    ROUTE = "/{project_id}/builds/{build_id}/results/{result_id}"
+    ROUTE = "/projects/{project_id}/builds/{build_id}/results/{result_id}"
     RESOURCE_CLASS = Result
     RESOURCE_ID_KEY = "result_id"

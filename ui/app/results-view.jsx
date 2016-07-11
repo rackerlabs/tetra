@@ -20,7 +20,7 @@ var ResultsView = React.createClass({
     },
 
     componentDidMount: function() {
-        var url = "/api/" + this.projectId() + "/builds/" + this.buildId() +
+        var url = "/api/projects/" + this.projectId() + "/builds/" + this.buildId() +
                   "/results";
         this.buildsRequest = $.get(url, function(result) {
             this.setState({

@@ -11,10 +11,10 @@ var BuildsTable = React.createClass({
     ],
     columnLinks: {
         name: function(build) {
-            return "/" + build.project_id + "/builds/" + build.id + "/results";
+            return "/projects/" + build.project_id + "/builds/" + build.id + "/results";
         },
         id: function(build) {
-            return "/" + build.project_id + "/builds/" + build.id + "/results";
+            return "/projects/" + build.project_id + "/builds/" + build.id + "/results";
         },
     },
 
