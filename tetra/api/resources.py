@@ -114,6 +114,17 @@ class BuildResource(Resource):
     RESOURCE_ID_KEY = "build_id"
 
 
+class LastCountByStatusResultsResource(Resources):
+    ROUTE = "/projects/{project_id}/results/{status}/{count}"
+    RESOURCE_CLASS = Result
+
+    def on_get(self, req, resp, **kwargs):
+        resp.status = falcon.HTTP_200
+        kwargs.update(req.params)
+        results = self.RESOURCE_CLASS.get_last_count_by_status(**kwargs)
+        resp.body = json.dumps(results)
+
+
 class ProjectResultsResource(Resources):
     ROUTE = "/projects/{project_id}/results"
     RESOURCE_CLASS = Result

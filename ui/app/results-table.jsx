@@ -19,10 +19,12 @@ var ResultsTable = React.createClass({
 
     render: function() {
         return (
-            <ResourceTable resources={this.props.results}
-                           columnTitles={this.columnTitles}
-                           columnKeys={this.columnKeys}
-                           columnLinks={this.columnLinks} />
+            <div class="rs-embedded-list-table-wrapper rs-embedded-medium">
+                <ResourceTable resources={this.props.results}
+                               columnTitles={this.columnTitles}
+                               columnKeys={this.columnKeys}
+                               columnLinks={this.columnLinks} />
+            </div>
         );
     },
 
