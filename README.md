@@ -1,6 +1,22 @@
 # tetra
 
-`tetra` is a test result aggregator
+Running tests on a regular basis will inevitably reveal some that are "flakey."
+That is, sometimes, they fail inexplicably, and then start running normally again shortly thereafter.
+Sifting through the failures manually would consume too much time.
+
+`tetra` is a test result aggregator.
+It's still a proof of concept side project, with lots to improve.
+However, the core idea is simple:
+we want a tool that lets testers store results in a consistent format,
+and which makes historical results available through a RESTful API
+so tools and dashboards can analyze results easier and faster.
+
+`tetra` looks for certain key strings in XUnit-style test results, aggregating what it finds along the way.
+As long as your testing infrastructure is capable of yielding XUnit-compatible output,
+`tetra` should be able to consume the data.
+
+Please note that `tetra` is, at present, a part-time project. 
+However, contributions are welcome.
 
 # Using the makefile
 
@@ -31,7 +47,7 @@ To get a postgres shell in the container:
     $ make docker-postgres-shell
 
 
-# Configuring tetra
+# Configuring `tetra`
 
 Tetra reads all of its config from a `tetra.conf` file. The complete list of
 options is in `tetra/config.py`. Here's an example `tetra.conf` file:
@@ -57,7 +73,7 @@ services in the `docker-compose.yml` as hostnames:
     ...
     broker_url = amqp://tetra:password@queue:5672//
 
-# Running the tests
+# Running `tetra`'s tests
 
 The tests look for a `tetra-test.conf` file. The complete list of options is in
 `tests/config.py`. Here's an example `tetra-test.conf` file:
