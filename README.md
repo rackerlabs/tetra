@@ -1,4 +1,4 @@
-# tetra
+# tetra test
 
 Running tests on a regular basis will inevitably reveal some that are "flakey."
 That is, sometimes, they fail inexplicably, and then start running normally again shortly thereafter.
