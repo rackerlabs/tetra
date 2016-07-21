@@ -196,7 +196,10 @@ class TestLastCountByStatusResults(BaseResultTest):
     def test_list_last_one_failed_result(self):
         # check that only first set of result gets returned
         resp = self.client.list_last_x_by_status_results(self.project_id,
-            'failed', 1, params={'build_name': self.build_name})
+                                                         'failed', 1,
+                                                         params={
+                                                             'build_name':
+                                                             self.build_name})
         self.assertEqual(resp.status_code, 200)
 
         results = resp.json()
@@ -209,7 +212,10 @@ class TestLastCountByStatusResults(BaseResultTest):
     def test_list_last_two_failed_result(self):
         # check that all results are returned with no limit
         resp = self.client.list_last_x_by_status_results(self.project_id,
-            'failed', 2, params={'build_name': self.build_name})
+                                                         'failed', 2,
+                                                         params={
+                                                             'build_name':
+                                                             self.build_name})
         self.assertEqual(resp.status_code, 200)
 
         results = resp.json()
@@ -221,7 +227,10 @@ class TestLastCountByStatusResults(BaseResultTest):
     def test_list_last_three_failed_result(self):
         # check that all results are returned with no limit
         resp = self.client.list_last_x_by_status_results(self.project_id,
-            'failed', 2, params={'build_name': self.build_name})
+                                                         'failed', 2,
+                                                         params={
+                                                             'build_name':
+                                                             self.build_name})
         self.assertEqual(resp.status_code, 200)
 
         results = resp.json()
@@ -233,7 +242,11 @@ class TestLastCountByStatusResults(BaseResultTest):
     def test_list_last_two_failed_build_threeresult(self):
         # check that all results are returned with no limit
         resp = self.client.list_last_x_by_status_results(self.project_id,
-            'failed', 2, params={'build_name': self.build_name_three})
+                                                         'failed', 2,
+                                                         params={
+                                                             'build_name':
+                                                             self.
+                                                             build_name_three})
         self.assertEqual(resp.status_code, 200)
 
         results = resp.json()
@@ -246,7 +259,10 @@ class TestLastCountByStatusResults(BaseResultTest):
     def test_list_last_one_passed_result(self):
         # check that only first set of result gets returned
         resp = self.client.list_last_x_by_status_results(self.project_id,
-            'passed', 1, params={'build_name': self.build_name})
+                                                         'passed', 1,
+                                                         params={
+                                                             'build_name':
+                                                             self.build_name})
         self.assertEqual(resp.status_code, 200)
 
         results = resp.json()
