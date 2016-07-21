@@ -12,6 +12,7 @@ class BaseResultTest(BaseTetraTest):
 
         resp = self._create_build(self.project_id)
         self.build_id = resp.json()['id']
+        self.build_name = resp.json()['name']
 
 
 class TestResults(BaseResultTest):
@@ -158,3 +159,115 @@ class TestResultsPagination(BaseResultTest):
                 expected_ids = self.result_ids[offset:offset + limit]
 
                 self.assertEqual(actual_ids, expected_ids)
+
+
+class TestLastCountByStatusResults(BaseResultTest):
+
+    def setUp(self):
+        super(TestLastCountByStatusResults, self).setUp()
+
+        # add another build with the same name
+        resp = self._create_build(self.project_id)
+        self.build_id_two = resp.json()['id']
+        self.build_name_two = resp.json()['name']
+
+        # add another build with a different name
+        resp = self._create_build(self.project_id, name='build_two')
+        self.build_id_three = resp.json()['id']
+        self.build_name_three = resp.json()['name']
+
+        self.result_ids = []
+        self._add_results(self.project_id, self.build_id)
+        self._add_results(self.project_id, self.build_id_two)
+        self._add_results(self.project_id, self.build_id_three)
+
+    def _add_results(self, project_id, build_id):
+        # create 4 results - two passes and two fails.
+        self.result_ids = []
+        for i in range(4):
+            test_name = "test-{}-{}".format(build_id, i)
+            result = "passed" if i % 2 == 0 else "failed"
+            resp = self._create_result(
+                project_id, build_id, test_name=test_name,
+                result=result,
+            )
+            self.result_ids.append(resp.json()['id'])
+
+    def test_list_last_one_failed_result(self):
+        # check that only first set of result gets returned
+        resp = self.client.list_last_x_by_status_results(self.project_id,
+                                                         'failed', 1,
+                                                         params={
+                                                             'build_name':
+                                                             self.build_name})
+        self.assertEqual(resp.status_code, 200)
+
+        results = resp.json()
+        self.assertEqual(len(results), 2)
+
+        for i in results:
+            self.assertEqual(i['result'], 'failed')
+            self.assertEqual(i['build_id'], self.build_id_two)
+
+    def test_list_last_two_failed_result(self):
+        # check that all results are returned with no limit
+        resp = self.client.list_last_x_by_status_results(self.project_id,
+                                                         'failed', 2,
+                                                         params={
+                                                             'build_name':
+                                                             self.build_name})
+        self.assertEqual(resp.status_code, 200)
+
+        results = resp.json()
+        self.assertEqual(len(results), 4)
+
+        for i in results:
+            self.assertEqual(i['result'], 'failed')
+
+    def test_list_last_three_failed_result(self):
+        # check that all results are returned with no limit
+        resp = self.client.list_last_x_by_status_results(self.project_id,
+                                                         'failed', 2,
+                                                         params={
+                                                             'build_name':
+                                                             self.build_name})
+        self.assertEqual(resp.status_code, 200)
+
+        results = resp.json()
+        self.assertEqual(len(results), 4)
+
+        for i in results:
+            self.assertEqual(i['result'], 'failed')
+
+    def test_list_last_two_failed_build_threeresult(self):
+        # check that all results are returned with no limit
+        resp = self.client.list_last_x_by_status_results(self.project_id,
+                                                         'failed', 2,
+                                                         params={
+                                                             'build_name':
+                                                             self.
+                                                             build_name_three})
+        self.assertEqual(resp.status_code, 200)
+
+        results = resp.json()
+        self.assertEqual(len(results), 2)
+
+        for i in results:
+            self.assertEqual(i['result'], 'failed')
+            self.assertEqual(i['build_id'], self.build_id_three)
+
+    def test_list_last_one_passed_result(self):
+        # check that only first set of result gets returned
+        resp = self.client.list_last_x_by_status_results(self.project_id,
+                                                         'passed', 1,
+                                                         params={
+                                                             'build_name':
+                                                             self.build_name})
+        self.assertEqual(resp.status_code, 200)
+
+        results = resp.json()
+        self.assertEqual(len(results), 2)
+
+        for i in results:
+            self.assertEqual(i['result'], 'passed')
+            self.assertEqual(i['build_id'], self.build_id_two)

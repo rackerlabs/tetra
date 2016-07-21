@@ -23,11 +23,23 @@ var ResourceTableEntry = React.createClass({
             var val = resource[key];
             if (columnLinks[key]) {
                 var link = columnLinks[key](resource);
-                result.push(
-                    <td key={i} className="rs-table-link">
-                        <Link to={link}> {val} </Link>
-                    </td>
-                );
+                // check if value exists.  This is useful for when you just want to 
+                // show actions
+                if(val !== undefined) {
+                    result.push(
+                        <td key={i} className="rs-table-link">
+                            <Link to={link}> {val} </Link>
+                        </td>
+                    );
+                } else {
+                    result.push(
+                        <td key={i} className="rs-table-link">
+                            <Link to={link}>
+                                <button className="rs-btn rs-btn-primary">Go</button>
+                            </Link>
+                        </td>
+                    );
+                }
             } else {
                 result.push(
                     <td key={i} className="rs-table-link"> {val} </td>

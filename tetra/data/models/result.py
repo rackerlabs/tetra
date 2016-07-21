@@ -15,11 +15,13 @@ limitations under the License.
 """
 import time
 
-from sqlalchemy.sql import func, select
+from sqlalchemy import desc
+from sqlalchemy.sql import func, select, and_
 
 from tetra.data import sql
 from tetra.data.db_handler import get_handler
 from tetra.data.models.base import BaseModel
+from tetra.data.models.build import Build
 from tetra.data.models.result_metadata import ResultMetadata
 
 
@@ -72,6 +74,47 @@ class Result(BaseModel):
             "metadata": metadata.to_dict(),
         }
         return results_dict
+
+    @classmethod
+    def get_last_count_by_status(cls, handler=None, limit=None, offset=None,
+                                 **kwargs):
+        handler = handler or get_handler()
+        if (kwargs and
+                'project_id' in kwargs and
+                'build_name' in kwargs and
+                'status' in kwargs and
+                'count' in kwargs):
+
+            # select * from results
+            # where status = kwargs['status']
+            # and build_id in (
+            #   select build_id from build
+            #   where build_name = kwargs['build_name']
+            #   and project_id = kwargs['project_id']
+            #   order by build_id desc
+            #   limit kwargs['count']
+            # )
+            query_by_build_name = select([Build.TABLE.c.id]).select_from(
+                    Build.TABLE).where(
+                        and_(
+                            Build.TABLE.c.project_id == kwargs['project_id'],
+                            Build.TABLE.c.name == kwargs['build_name']
+                        )).order_by(
+                                desc(Build.TABLE.c.id)
+                            ).limit(
+                                kwargs['count']
+                            )
+
+            last_count_by_status_query = cls.TABLE.select().where(
+                    and_(
+                        cls.TABLE.c.result == kwargs['status'],
+                        cls.TABLE.c.build_id.in_(query_by_build_name)))
+
+            return handler.get_all(
+                resource_class=cls, query=last_count_by_status_query,
+                limit=limit, offset=offset)
+        else:
+            return []
 
     @classmethod
     def create_many(cls, resources, handler=None, **kwargs):

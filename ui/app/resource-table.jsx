@@ -8,10 +8,12 @@ var ResourceTable = React.createClass({
         var entries = this.tableEntries(this.props.resources,
                                         this.props.columnKeys);
         return (
-            <table className="rs-list-table">
-                {headers}
-                {entries}
-            </table>
+            <div className="rs-embedded-list-table-wrapper rs-embedded-medium">
+                <table className="rs-list-table rs-embedded-list-table">
+                    {headers}
+                    {entries}
+                </table>
+            </div>
         );
     },
 

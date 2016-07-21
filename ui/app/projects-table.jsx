@@ -17,9 +17,9 @@ var ProjectsTable = React.createClass({
     render: function() {
         return (
             <ResourceTable resources={this.props.projects}
-                           columnTitles={this.columnTitles}
-                           columnKeys={this.columnKeys}
-                           columnLinks={this.columnLinks} />
+                            columnTitles={this.columnTitles}
+                            columnKeys={this.columnKeys}
+                            columnLinks={this.columnLinks} />
         );
     },
 
