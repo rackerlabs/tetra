@@ -23,12 +23,10 @@ var BuildsTable = React.createClass({
 
     render: function() {
         return (
-            <div className="rs-embedded-list-table-wrapper rs-embedded-medium">
-                <ResourceTable resources={this.props.builds}
-                               columnTitles={this.columnTitles}
-                               columnKeys={this.columnKeys}
-                               columnLinks={this.columnLinks} />
-            </div>
+            <ResourceTable resources={this.props.builds}
+                            columnTitles={this.columnTitles}
+                            columnKeys={this.columnKeys}
+                            columnLinks={this.columnLinks} />
         );
     }
 

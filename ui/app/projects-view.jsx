@@ -23,7 +23,7 @@ var ProjectsView = React.createClass({
 
     render: function() {
         return (
-            <div className="rs-embedded-list-table-wrapper rs-embedded-medium">
+            <div>
                 <h2 className="rs-page-title">Projects</h2>
                 <ProjectsTable projects={this.state.projects} />
             </div>

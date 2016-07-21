@@ -42,7 +42,7 @@ var LastFailedView = React.createClass({
 
     render: function() {
         return (
-            <div className="rs-embedded-list-table-wrapper rs-embedded-medium">
+            <div>
                 <h2 className="rs-page-title">Last Failed</h2>
                 <h3>Failed results</h3>
                 <ResultsTable results={this.state.results} />

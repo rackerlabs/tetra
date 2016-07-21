@@ -15,6 +15,7 @@ limitations under the License.
 """
 import time
 
+from sqlalchemy import desc
 from sqlalchemy.sql import func, select, and_
 
 from tetra.data import sql
@@ -93,7 +94,9 @@ class Result(BaseModel):
             # )
             query_by_build_name = select([Build.TABLE.c.id]).select_from(
                     Build.TABLE).where(
-                            Build.TABLE.c.name == kwargs['build_name']).limit(
+                        Build.TABLE.c.name == kwargs['build_name']).order_by(
+                                desc(Build.TABLE.c.id)
+                            ).limit(
                                 kwargs['count']
                             )
 
