@@ -80,6 +80,7 @@ class Result(BaseModel):
                                  **kwargs):
         handler = handler or get_handler()
         if (kwargs and
+                'project_id' in kwargs and
                 'build_name' in kwargs and
                 'status' in kwargs and
                 'count' in kwargs):
@@ -89,12 +90,16 @@ class Result(BaseModel):
             # and build_id in (
             #   select build_id from build
             #   where build_name = kwargs['build_name']
+            #   and project_id = kwargs['project_id']
             #   order by build_id desc
-            #   limit 5
+            #   limit kwargs['count']
             # )
             query_by_build_name = select([Build.TABLE.c.id]).select_from(
                     Build.TABLE).where(
-                        Build.TABLE.c.name == kwargs['build_name']).order_by(
+                        and_(
+                            Build.TABLE.c.project_id == kwargs['project_id'],
+                            Build.TABLE.c.name == kwargs['build_name']
+                        )).order_by(
                                 desc(Build.TABLE.c.id)
                             ).limit(
                                 kwargs['count']
