@@ -115,7 +115,7 @@ class BuildResource(Resource):
 
 
 class LastCountByStatusResultsResource(Resources):
-    ROUTE = "/projects/{project_id}/results/{status}/{count}"
+    ROUTE = "/projects/{project_id}/status/{status}/count/{count}"
     RESOURCE_CLASS = Result
 
     def on_get(self, req, resp, **kwargs):

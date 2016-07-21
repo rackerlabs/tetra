@@ -16,7 +16,7 @@ var ProjectsTable = React.createClass({
 
     render: function() {
         return (
-            <div class="rs-embedded-list-table-wrapper rs-embedded-medium">
+            <div className="rs-embedded-list-table-wrapper rs-embedded-medium">
                 <ResourceTable resources={this.props.projects}
                                columnTitles={this.columnTitles}
                                columnKeys={this.columnKeys}

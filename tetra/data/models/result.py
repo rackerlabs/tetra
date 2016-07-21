@@ -79,9 +79,10 @@ class Result(BaseModel):
                                  **kwargs):
         handler = handler or get_handler()
         if (kwargs and
-            'build_name' in kwargs and
-            'status' in kwargs and
-            'count' in kwargs):
+                'build_name' in kwargs and
+                'status' in kwargs and
+                'count' in kwargs):
+
             # select * from results
             # where status = kwargs['status']
             # and build_id in (
@@ -106,7 +107,6 @@ class Result(BaseModel):
                 limit=limit, offset=offset)
         else:
             return []
-
 
     @classmethod
     def create_many(cls, resources, handler=None, **kwargs):

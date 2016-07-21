@@ -9,8 +9,8 @@ import LastFailedView from './last-failed-view';
 (function() {
     ReactDOM.render(
         <Router history={browserHistory}>
-            <Route path="/projects" component={ProjectsView} />
-            <Route path="/projects/:project_id/last_failed" component={LastFailedView} />
+            <Route path="/" component={ProjectsView} />
+            <Route path="/projects/:project_id/builds/:build_name/last_failed/:count" component={LastFailedView} />
             <Route path="/projects/:project_id/builds" component={BuildsView} />
             <Route path="/projects/:project_id/builds/:build_id/results" component={ResultsView} />
         </Router>,

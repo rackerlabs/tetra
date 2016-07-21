@@ -17,20 +17,20 @@ var BuildsTable = React.createClass({
             return "/projects/" + build.project_id + "/builds/" + build.id + "/results";
         },
         show_failed: function(build) {
-            return "/projects/" + build.project_id + "/builds/" + build.name + "/last_failed";
+            return "/projects/" + build.project_id + "/builds/" + encodeURIComponent(build.name) + "/last_failed/10";
         }
     },
 
     render: function() {
         return (
-            <div class="rs-embedded-list-table-wrapper rs-embedded-medium">
+            <div className="rs-embedded-list-table-wrapper rs-embedded-medium">
                 <ResourceTable resources={this.props.builds}
                                columnTitles={this.columnTitles}
                                columnKeys={this.columnKeys}
                                columnLinks={this.columnLinks} />
             </div>
         );
-    },
+    }
 
 });
 
