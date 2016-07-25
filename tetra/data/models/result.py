@@ -20,7 +20,7 @@ from sqlalchemy.sql import func, select, and_
 
 from tetra.data import sql
 from tetra.data.db_handler import get_handler
-from tetra.data.models.base import BaseModel
+from tetra.data.models.base import BaseModel, truncate
 from tetra.data.models.build import Build
 from tetra.data.models.result_metadata import ResultMetadata
 
@@ -33,11 +33,13 @@ class Result(BaseModel):
                  timestamp=None,  result_message=None):
         if id:
             self.id = int(id)
-        self.test_name = test_name
+
+        self.test_name = truncate(test_name,
+                                  self.TABLE.c.test_name.type.length)
         self.project_id = int(project_id)
         self.build_id = int(build_id)
         self.timestamp = timestamp or time.time()
-        self.result = result
+        self.result = truncate(result, self.TABLE.c.result.type.length)
         self.result_message = result_message
 
     @classmethod

@@ -271,3 +271,19 @@ class TestLastCountByStatusResults(BaseResultTest):
         for i in results:
             self.assertEqual(i['result'], 'passed')
             self.assertEqual(i['build_id'], self.build_id_two)
+
+
+class TestResultStringTuncation(BaseResultTest):
+    """Test that the api truncates user input to fit in database columns"""
+
+    def test_api_truncates_result_fields(self):
+        long_str = "a" * 257
+        create_resp = self._create_result(
+            project_id=self.project_id,
+            build_id=self.build_id,
+            test_name=long_str,
+            result=long_str,
+        )
+        result = create_resp.json()
+        self.assertEqual(len(result['test_name']), 256)
+        self.assertEqual(len(result['result']), 256)
