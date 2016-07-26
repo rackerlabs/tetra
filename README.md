@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/rackerlabs/tetra.svg?branch=master)](https://travis-ci.org/rackerlabs/tetra)
+
 # tetra
 
 Running tests on a regular basis will inevitably reveal some that are "flakey."
@@ -15,7 +17,7 @@ so tools and dashboards can analyze results easier and faster.
 As long as your testing infrastructure is capable of yielding XUnit-compatible output,
 `tetra` should be able to consume the data.
 
-Please note that `tetra` is, at present, a part-time project. 
+Please note that `tetra` is, at present, a part-time project.
 However, contributions are welcome.
 
 # Using the makefile
@@ -30,7 +32,12 @@ To build the containers:
 
     $ make docker-build
 
-To build/run the containers:
+Start the database and queue first:
+
+    $ make docker-db
+    $ make docker-queue
+
+To start the api and worker nodes:
 
     $ make docker-dev
 
@@ -75,6 +82,16 @@ services in the `docker-compose.yml` as hostnames:
 
 # Running `tetra`'s tests
 
+### Dependencies
+
+To install all the dependencies and tox,
+
+    $ pip install -r requirements.txt
+    $ pip install -r test-requirements.txt
+    $ pip install tox
+
+### Functional tests
+
 The tests look for a `tetra-test.conf` file. The complete list of options is in
 `tests/config.py`. Here's an example `tetra-test.conf` file:
 
@@ -87,5 +104,20 @@ The you can either use `tox` to run the tests:
 
 Or you can use the makefile:
 
-    $ pip install -r test-requirements.txt
     $ make test
+
+### Style checks
+
+Tetra's code should pass the `flake8` style checks. To run these, use tox:
+
+    $ tox -e flake8
+
+
+# Contributing
+
+Anyone can contribute! If you find an issue, open an issue in github! If you
+want to make a code or documentation change, create a pull request!
+
+Travis CI jobs run the functional tests and style checks on all pull requests.
+If you make a pull request and the CI checks fail, see above on how to run
+these checks locally in order to get things passing.
