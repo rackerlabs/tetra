@@ -17,7 +17,7 @@ from sqlalchemy import and_, text, select
 
 from tetra.data import sql
 from tetra.data.db_handler import get_handler
-from tetra.data.models.base import BaseModel
+from tetra.data.models.base import BaseModel, truncate
 from tetra.data.models.tags import Tag
 
 
@@ -31,10 +31,12 @@ class Build(BaseModel):
         if id:
             self.id = int(id)
         self.project_id = int(project_id)
-        self.name = name
-        self.build_url = build_url
-        self.region = region
-        self.environment = environment
+        self.name = truncate(name, self.TABLE.c.name.type.length)
+        self.build_url = truncate(build_url,
+                                  self.TABLE.c.build_url.type.length)
+        self.region = truncate(region, self.TABLE.c.region.type.length)
+        self.environment = truncate(environment,
+                                    self.TABLE.c.environment.type.length)
 
     @classmethod
     def get_all(cls, handler=None, limit=None, offset=None, project_id=None,

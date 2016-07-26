@@ -16,3 +16,12 @@ class TestProjects(BaseTetraTest):
         project = self.create_resp.json()
         self.assertEqual(project['name'], 'test-project')
         self.assertIn('id', project)
+
+
+class TestProjectStringTruncation(BaseTetraTest):
+    """Test that the api truncates user input to fit in database columns"""
+
+    def test_api_truncates_long_project_fields(self):
+        create_resp = self._create_project(name="a" * 257)
+        project = create_resp.json()
+        self.assertEqual(len(project['name']), 256)

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 from tetra.data import sql
-from tetra.data.models.base import BaseModel
+from tetra.data.models.base import BaseModel, truncate
 
 
 class Project(BaseModel):
@@ -24,4 +24,4 @@ class Project(BaseModel):
     def __init__(self, name, id=None):
         if id:
             self.id = id
-        self.name = name
+        self.name = truncate(name, self.TABLE.c.name.type.length)

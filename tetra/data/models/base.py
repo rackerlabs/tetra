@@ -21,6 +21,13 @@ from tetra.data.db_handler import get_handler
 conf = cfg.CONF
 
 
+def truncate(value, length):
+    """Truncate the value (a string) to the given length."""
+    if value is None:
+        return None
+    return value[:length]
+
+
 class DictSerializer(object):
 
     @classmethod
