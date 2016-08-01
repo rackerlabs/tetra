@@ -4,19 +4,12 @@ import string
 from junit_xml import TestSuite, TestCase
 
 
-_LETTERS = None
-try:
-    _LETTERS = string.ascii_letters
-except AttributeError:
-    _LETTERS = string.letters
-
-
 def rand_duration():
     return random.randint(0, 120) + random.random()
 
 
 def rand_string(prefix, size=40):
-    text = "".join([random.choice(_LETTERS + ' ') for _ in range(size)])
+    text = "".join([random.choice(string.ascii_letters + ' ') for _ in range(size)])
     return "{} {}".format(prefix, text)
 
 
