@@ -1,0 +1,44 @@
+{
+    "docs": [
+        {
+            "location": "/", 
+            "text": "Tetra\n\n\ntetra\n is a test result aggregator designed to make test result analysis\nfaster, easier, and more automated.\n\n\nHow to use Tetra\n\n\n\n\nRun a test suite, like a suite of unit tests\n\n\nCreate a \nbuild\n in \ntetra\n's REST API for your test suite\n\n\nPost your test results to your created build. \ntetra\n accepts\n  XUnit-compatible XML to make this step easy\n\n\nExplore test results...\n\n\nin the dashboard,\n\n\nin the REST API,\n\n\nor use the REST API to build custom tools\n\n\n\n\n\n\n\n\nREST API Documentation\n\n\nThe \ntetra\n API consists of the following basic resources:\n\n\n\n\nProject\n - a project is the top-level container for all other resources\n\n\nBuild\n - a build groups results together\n\n\nResult\n - a result of a single test case\n\n\n\n\nThis is a JSON-based API:\n Unless indicated otherwise, all requests and\nresponses are in JSON format. All requests should have the \nContent-type\n and\n\nAccept\n headers set to \napplication/json\n.\n\n\nProjects\n\n\nA project is the top-level container for all other resources.\n\n\nPOST /projects\n\n\nCreate a new project\n\n\nRequest body\n\n\n{\n    \nname\n: \nmy-project\n\n}\n\n\n\n\nResponse body\n\n\n{\n    \nid\n: 1,\n    \nname\n: \nmy-project\n\n}\n\n\n\n\nGET /projects\n\n\nList all projects\n\n\nResponse body\n\n\n[\n    {\n        \nid\n: 1,\n        \nname\n: \nmy-project\n\n    }\n]\n\n\n\n\nArchitecture\n\n\ntetra\n consists of:\n\n\n\n\nAPI nodes\n\n\nWorker nodes\n\n\nA database\n\n\nA queue\n\n\nA dashboard", 
+            "title": "Home"
+        }, 
+        {
+            "location": "/#tetra", 
+            "text": "tetra  is a test result aggregator designed to make test result analysis\nfaster, easier, and more automated.", 
+            "title": "Tetra"
+        }, 
+        {
+            "location": "/#how-to-use-tetra", 
+            "text": "Run a test suite, like a suite of unit tests  Create a  build  in  tetra 's REST API for your test suite  Post your test results to your created build.  tetra  accepts\n  XUnit-compatible XML to make this step easy  Explore test results...  in the dashboard,  in the REST API,  or use the REST API to build custom tools", 
+            "title": "How to use Tetra"
+        }, 
+        {
+            "location": "/#rest-api-documentation", 
+            "text": "The  tetra  API consists of the following basic resources:   Project  - a project is the top-level container for all other resources  Build  - a build groups results together  Result  - a result of a single test case   This is a JSON-based API:  Unless indicated otherwise, all requests and\nresponses are in JSON format. All requests should have the  Content-type  and Accept  headers set to  application/json .", 
+            "title": "REST API Documentation"
+        }, 
+        {
+            "location": "/#projects", 
+            "text": "A project is the top-level container for all other resources.", 
+            "title": "Projects"
+        }, 
+        {
+            "location": "/#post-projects", 
+            "text": "Create a new project  Request body  {\n     name :  my-project \n}  Response body  {\n     id : 1,\n     name :  my-project \n}", 
+            "title": "POST /projects"
+        }, 
+        {
+            "location": "/#get-projects", 
+            "text": "List all projects  Response body  [\n    {\n         id : 1,\n         name :  my-project \n    }\n]", 
+            "title": "GET /projects"
+        }, 
+        {
+            "location": "/#architecture", 
+            "text": "tetra  consists of:   API nodes  Worker nodes  A database  A queue  A dashboard", 
+            "title": "Architecture"
+        }
+    ]
+}
