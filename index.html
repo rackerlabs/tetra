@@ -83,7 +83,14 @@
         
             <li><a href="#rest-api-documentation">REST API Documentation</a></li>
         
-            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#projects">Projects</a></li>
+        
+            <li><a href="#builds">Builds</a></li>
+        
+            <li><a href="#results">Results</a></li>
+        
+    
+        <li class="main "><a href="#architecture">Architecture</a></li>
         
     
     </ul>
@@ -107,7 +114,7 @@ faster, easier, and more automated.</p>
 </li>
 </ul>
 <h2 id="rest-api-documentation">REST API Documentation</h2>
-<p>The <code>tetra</code> API consists of the following basic resources:</p>
+<p>The <code>tetra</code> API consists of the following resources:</p>
 <ul>
 <li><code>Project</code> - a project is the top-level container for all other resources</li>
 <li><code>Build</code> - a build groups results together</li>
@@ -116,38 +123,378 @@ faster, easier, and more automated.</p>
 <p><strong>This is a JSON-based API:</strong> Unless indicated otherwise, all requests and
 responses are in JSON format. All requests should have the <code>Content-type</code> and
 <code>Accept</code> headers set to <code>application/json</code>.</p>
-<h3 id="projects">Projects</h3>
-<p>A project is the top-level container for all other resources.</p>
-<h4 id="post-projects">POST /projects</h4>
-<p>Create a new project</p>
-<p><strong>Request body</strong></p>
-<div class="codehilite" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>{
-    <span style="color: #008000; font-weight: bold">&quot;name&quot;</span>: <span style="color: #BA2121">&quot;my-project&quot;</span>
+<h3 id="response-codes">Response Codes</h3>
+<p>These are the response codes used by Tetra.</p>
+<table>
+<thead>
+<tr>
+<th>Error Code</th>
+<th>Meaning</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+<td>The request handled successfully and information was returned in the body.</td>
+</tr>
+<tr>
+<td>201</td>
+<td>Created</td>
+<td>The request successfully and a resource was created. Check the response body for the resource id.</td>
+</tr>
+<tr>
+<td>204</td>
+<td>No Content</td>
+<td>The request was handled successfuly and the response body is empty.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+<td>The request could not be parsed or the request data was invalid.</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+<td>The requested resource was not found.</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Server Error</td>
+<td>The API server encountered an error while handling the request.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="projects">Projects</h2>
+<p>A Project is the top-level container for all other resources.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>The name of the project. This does not need to be unique.</td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>int</td>
+<td>The unique project id.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="create-a-project">Create a Project</h3>
+<pre><code class="http">POST /projects HTTP/1.1
+...
+
+{
+    &quot;name&quot;: &quot;my-project&quot;
 }
-</pre></div>
 
 
-<p><strong>Response body</strong></p>
-<div class="codehilite" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>{
-    <span style="color: #008000; font-weight: bold">&quot;id&quot;</span>: <span style="color: #666666">1</span>,
-    <span style="color: #008000; font-weight: bold">&quot;name&quot;</span>: <span style="color: #BA2121">&quot;my-project&quot;</span>
+HTTP/1.1 201 Created
+...
+
+{
+    &quot;id&quot;: 5,
+    &quot;name&quot;: &quot;my-project&quot;
 }
-</pre></div>
+</code></pre>
 
+<h3 id="list-projects">List Projects</h3>
+<pre><code class="http">GET /projects HTTP/1.1
+...
 
-<h4 id="get-projects">GET /projects</h4>
-<p>List all projects</p>
-<p><strong>Response body</strong></p>
-<div class="codehilite" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>[
+[
     {
-        <span style="color: #008000; font-weight: bold">&quot;id&quot;</span>: <span style="color: #666666">1</span>,
-        <span style="color: #008000; font-weight: bold">&quot;name&quot;</span>: <span style="color: #BA2121">&quot;my-project&quot;</span>
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;my-project&quot;
+    },
+    {
+        &quot;id&quot;: 2,
+        &quot;name&quot;: &quot;my-other-project&quot;
     }
 ]
-</pre></div>
+</code></pre>
+
+<h2 id="builds">Builds</h2>
+<p>A Build is a container for Results.</p>
+<p>(A Build typically corresponds to a job on some automation server, like
+<a href="https://jenkins.io/">Jenkins</a>.)</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>yes</td>
+<td>A descriptive name. This does not need to be unique.</td>
+</tr>
+<tr>
+<td><code>build_url</code></td>
+<td>string</td>
+<td>no</td>
+<td>A link for your own usage, like to logs or to a Jenkins job url.</td>
+</tr>
+<tr>
+<td><code>region</code></td>
+<td>string</td>
+<td>no</td>
+<td>The region being tested (e.g. US East, US West, IAD, DFW, ...)</td>
+</tr>
+<tr>
+<td><code>environment</code></td>
+<td>string</td>
+<td>no</td>
+<td>The environment being tested (e.g. preprod, staging, prod)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="create-a-build">Create a Build</h3>
+<pre><code class="http">POST /projects/1/builds HTTP/1.1
+...
+
+{
+    &quot;build_url&quot;: &quot;http://jenkins.example.com/job/my-unit-tests/22&quot;,
+    &quot;environment&quot;: &quot;preprod&quot;,
+    &quot;name&quot;: &quot;my-unit-tests&quot;,
+    &quot;region&quot;: &quot;US East&quot;
+}
 
 
-<h2 id="architecture">Architecture</h2>
+HTTP/1.1 201 Created
+...
+
+{
+    &quot;build_url&quot;: &quot;http://jenkins.example.com/job/my-unit-tests/22&quot;,
+    &quot;environment&quot;: &quot;preprod&quot;,
+    &quot;id&quot;: 1,
+    &quot;name&quot;: &quot;my-unit-tests&quot;,
+    &quot;project_id&quot;: 1,
+    &quot;region&quot;: &quot;US&quot;,
+    &quot;tags&quot;: null
+}
+</code></pre>
+
+<h3 id="list-builds">List Builds</h3>
+<pre><code class="http">GET /projects/1/builds HTTP/1.1
+...
+
+
+HTTP/1.1 200 OK
+...
+
+[
+    {
+        &quot;build_url&quot;: &quot;http://jenkins.example.com/job/my-unit-tests/22&quot;,
+        &quot;environment&quot;: &quot;preprod&quot;,
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;my-unit-tests&quot;,
+        &quot;project_id&quot;: 1,
+        &quot;region&quot;: &quot;US&quot;
+    },
+    {
+        &quot;build_url&quot;: null,
+        &quot;environment&quot;: &quot;preprod&quot;,
+        &quot;id&quot;: 2,
+        &quot;name&quot;: &quot;my-unit-tests&quot;,
+        &quot;project_id&quot;: 1,
+        &quot;region&quot;: &quot;US&quot;
+    }
+]
+</code></pre>
+
+<h3 id="fetch-a-build">Fetch a Build</h3>
+<pre><code class="http">GET /projects/1/builds/2 HTTP/1.1
+...
+
+
+HTTP/1.1 200 OK
+...
+
+{
+    &quot;build_url&quot;: null,
+    &quot;environment&quot;: &quot;preprod&quot;,
+    &quot;id&quot;: 2,
+    &quot;name&quot;: &quot;my-unit-tests&quot;,
+    &quot;project_id&quot;: 1,
+    &quot;region&quot;: &quot;US&quot;
+}
+</code></pre>
+
+<h2 id="results">Results</h2>
+<p>A Result corresponds to an individual test case.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test_name</code></td>
+<td>string</td>
+<td>yes</td>
+<td>The name of the result. This is typically the name of a test case.</td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td>string</td>
+<td>yes</td>
+<td>The test case result. This should be one of: <code>passed</code>, <code>failed</code>, <code>skipped</code>, <code>error</code>.</td>
+</tr>
+<tr>
+<td><code>result_message</code></td>
+<td>string</td>
+<td>no</td>
+<td>Any additional text you would like to store, like test logs or tracebacks.</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>float</td>
+<td>no</td>
+<td>The time the test was run. Defaults to the API server time.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="create-a-result">Create a Result</h3>
+<pre><code class="http">POST /projects/1/builds/1/results HTTP/1.1
+...
+
+{
+    &quot;result&quot;: &quot;passed&quot;,
+    &quot;result_message&quot;: &quot;Traceback ... &lt;some long traceback&gt;&quot;,
+    &quot;test_name&quot;: &quot;designate_tempest_plugin.tests.scenario.v2.test_zones.ZonesTest.test_create_and_delete_zone&quot;
+}
+
+HTTP/1.1 201 Created
+...
+
+{
+    &quot;build_id&quot;: 1,
+    &quot;id&quot;: 352,
+    &quot;project_id&quot;: 1,
+    &quot;result&quot;: &quot;passed&quot;,
+    &quot;result_message&quot;: &quot;Traceback ... &lt;some long traceback&gt;&quot;,
+    &quot;test_name&quot;: &quot;designate_tempest_plugin.tests.scenario.v2.test_zones.ZonesTest.test_create_and_delete_zone&quot;,
+    &quot;timestamp&quot;: 1470079231.426697
+}
+</code></pre>
+
+<h3 id="import-results-from-xunit-xml">Import Results from XUnit XML</h3>
+<p>This allows you to send XUnit-style XML directly to Tetra. Tetra will create
+one result per <code>&lt;testcase&gt;</code>.</p>
+<p><strong>Notes</strong></p>
+<ul>
+<li>This requires the request header <code>Content-type: application/xml</code></li>
+<li>Tetra only supports XML containing a single <code>&lt;testsuite&gt;</code> tag within the
+  <code>&lt;testsuites&gt;</code> tag.</li>
+</ul>
+<pre><code class="http">POST /projects/1/builds/2/results HTTP/1.1
+Accept: application/json
+Content-Type: application/xml
+
+&lt;?xml version=&quot;1.0&quot; ?&gt;
+&lt;testsuites errors=&quot;100&quot; failures=&quot;100&quot; skipped=&quot;100&quot; tests=&quot;400&quot; time=&quot;25109.651362&quot;&gt;
+    &lt;testsuite errors=&quot;100&quot; failures=&quot;100&quot; name=&quot;fake-junit-xml-suite&quot; skipped=&quot;100&quot; tests=&quot;400&quot; time=&quot;25109.651362&quot;&gt;
+        &lt;testcase classname=&quot;generated.xml.test.case.passes&quot; name=&quot;TestPassed0&quot; time=&quot;91.617842&quot; /&gt;
+        &lt;testcase classname=&quot;generated.xml.test.case.passes&quot; name=&quot;TestPassed1&quot; time=&quot;5.880439&quot; /&gt;
+        ...
+        &lt;testcase classname=&quot;generated.xml.test.case.errors&quot; name=&quot;TestErrored98&quot; time=&quot;100.621474&quot;&gt;
+            &lt;error message=&quot;error! xXFrXlfHQjKUQevMahHnS gRctLqwOKwDzyRXSHl&quot; type=&quot;error&quot; /&gt;
+        &lt;/testcase&gt;
+        &lt;testcase classname=&quot;generated.xml.test.case.errors&quot; name=&quot;TestErrored99&quot; time=&quot;44.525510&quot;&gt;
+            &lt;error message=&quot;error! uxYVqAN XRJZUdgXzyMgxImOCoEBDndjE YJj gb&quot; type=&quot;error&quot; /&gt;
+        &lt;/testcase&gt;
+    &lt;/testsuite&gt;
+&lt;/testsuites&gt;
+
+HTTP/1.1 201 Created
+...
+
+{
+    &quot;metadata&quot;: {
+        &quot;success_rate&quot;: 33.33,
+        &quot;total_errors&quot;: 100,
+        &quot;total_failures&quot;: 100,
+        &quot;total_passed&quot;: 100,
+        &quot;total_results&quot;: 400,
+        &quot;total_skipped&quot;: 100
+    }
+}
+</code></pre>
+
+<h3 id="list-results">List Results</h3>
+<p>There are two ways to list Results, which give responses in the same format:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/projects/{project_id}/builds/{build_id}/results</code></td>
+<td>List Results for the Build <code>build_id</code> and Project <code>project_id</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/projects/{project_id}/results</code></td>
+<td>List all Results for the Project <code>project_id</code>. This is useful for filtering across all builds.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="http">GET /projects/1/builds/2/results HTTP/1.1
+...
+
+
+HTTP/1.1 200 OK
+...
+
+{
+    &quot;metadata&quot;: {
+        &quot;success_rate&quot;: 33.33,
+        &quot;total_errors&quot;: 100,
+        &quot;total_failures&quot;: 100,
+        &quot;total_passed&quot;: 100,
+        &quot;total_results&quot;: 400,
+        &quot;total_skipped&quot;: 100
+    },
+    &quot;results&quot;: [
+        {
+            &quot;build_id&quot;: 2,
+            &quot;id&quot;: 353,
+            &quot;project_id&quot;: 1,
+            &quot;result&quot;: &quot;passed&quot;,
+            &quot;result_message&quot;: null,
+            &quot;test_name&quot;: &quot;generated.xml.test.case.passes.TestPassed0&quot;,
+            &quot;timestamp&quot;: 1470079711
+        },
+        ...
+    ]
+}
+</code></pre>
+
+<h1 id="architecture">Architecture</h1>
 <p><code>tetra</code> consists of:</p>
 <ul>
 <li>API nodes</li>
@@ -204,5 +551,5 @@ responses are in JSON format. All requests should have the <code>Content-type</c
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-08-01 15:48:27.371537
+Build Date UTC : 2016-08-01 19:48:22.693163
 -->
