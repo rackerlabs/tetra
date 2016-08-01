@@ -54,6 +54,38 @@ To get a postgres shell in the container:
     $ make docker-postgres-shell
 
 
+# [Docs](https://rackerlabs.github.io/tetra/)
+
+The live docs are at: https://rackerlabs.github.io/tetra/
+
+Docs are written with [mkdocs](http://www.mkdocs.org/). The docs sources are
+in the `docs/` directory, and `mkdocs.yml` contains the mkdocs configuration.
+
+To build the docs, first install the dev-requirements:
+
+    $ pip install dev-requirements.txt
+
+Then to view docs locally, before committing:
+
+    $ make docs
+
+This starts up a local server to view your changes.
+
+### Deploy
+
+Never deploy doc changes that aren't merged into master. To successfully deploy
+doc changes, you will need push access to the `rackerlabs/tetra` repository.
+
+To deploy the documentation:
+
+    $ git checkout master
+    $ git pull origin master
+    $ make deploy-docs
+
+This builds and deploys the latest version of the docs to the `gh-pages`
+branch, which is then served by GitHub Pages at
+https://rackerlabs.github.io/tetra/.
+
 # Configuring `tetra`
 
 Tetra reads all of its config from a `tetra.conf` file. The complete list of

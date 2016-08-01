@@ -1,0 +1,10 @@
+site_name: Tetra Docs
+site_url: https://rackerlabs.github.io/tetra/
+repo_url: https://github.com/rackerlabs/tetra/
+copyright: © 2016 Rackspace
+
+pages:
+  - Home: index.md
+
+markdown_extensions:
+  - fenced_code

@@ -7,3 +7,4 @@ tetra.conf
 tetra-test.conf
 .tox/
 npm-debug.log
+site/

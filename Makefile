@@ -1,3 +1,4 @@
+.PHONY: docs deploy-docs test start
 SHELL := /bin/bash
 
 # used to check what platform we're on, to see if we should use a vm for docker
@@ -27,6 +28,8 @@ help:
 	@echo '  start                      - start the tetra api, running locally'
 	@echo '  test                       - run tests (you must first write tetra-test.conf)'
 	@echo '  rabbitmq-admin-ui          - open the rabbitmq management interface in a browser'
+	@echo '  docs                       - build the docs and start a local server to view them'
+	@echo '  deploy-docs                - build and deploy docs to github pages'
 	@echo 'Docker commands:'
 	@echo '  docker-build               - build all docker images for a dev environment'
 	@echo '  docker-dev                 - build/run all images/containers for a dev environment'
@@ -52,6 +55,13 @@ start:
 
 test:
 	py.test -v ./tests
+
+docs:
+	mkdocs serve
+
+# running with tox resulted in "Unknown committed ..." on the gh-pgaes branch
+deploy-docs:
+	mkdocs gh-deploy -c
 
 docker-build: docker-machine-create
 	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml build
