@@ -1,0 +1,10 @@
+version: '2'
+services:
+  api:
+    restart: always
+  worker:
+    restart: always
+  queue:
+    restart: always
+  ui:
+    restart: always

@@ -64,22 +64,25 @@ deploy-docs:
 	mkdocs gh-deploy -c
 
 docker-build: docker-machine-create
-	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml build
+	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f development.yml build
 
 docker-dev:
-	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up api worker ui
+	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f development.yml up api worker ui
+
+docker-deploy-production:
+	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f production.yml up -d
 
 docker-restart-worker:
-	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart worker
+	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f development.yml restart worker
 
 docker-db:
-	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d db
+	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f development.yml up -d db
 
 docker-queue:
-	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d queue
+	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f development.yml up -d queue
 
 docker-logs:
-	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml logs -f
+	$(WITH_DOCKER_ENV) && docker-compose -f docker-compose.yml -f development.yml logs -f
 
 docker-ps:
 	$(WITH_DOCKER_ENV) && docker ps
