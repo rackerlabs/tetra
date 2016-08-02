@@ -6,5 +6,7 @@ services:
     restart: always
   queue:
     restart: always
+  db:
+    restart: always
   ui:
     restart: always
