@@ -17,8 +17,7 @@ class BaseTetraTest(unittest.TestCase):
         resp = self.client.create_project(data)
         self.assertEqual(resp.status_code, 201)
 
-        # TODO(pglass): tetra can't delete projects
-        # self.addCleanup(self.client.delete_project, resp.json()['id'])
+        self.addCleanup(self.client.delete_project, resp.json()['id'])
         return resp
 
     def _create_build(self, project_id, name=None, build_url=None,

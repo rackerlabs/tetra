@@ -75,6 +75,12 @@ class ProjectsResource(Resources):
     RESOURCE_CLASS = Project
 
 
+class ProjectResource(Resource):
+    ROUTE = "/projects/{project_id}"
+    RESOURCE_CLASS = Project
+    RESOURCE_ID_KEY = "project_id"
+
+
 class BuildsResource(Resources):
     ROUTE = "/projects/{project_id}/builds"
     RESOURCE_CLASS = Build
