@@ -74,6 +74,10 @@ HTTP/1.1 201 Created
 GET /projects HTTP/1.1
 ...
 
+
+HTTP/1.1 200 OK
+...
+
 [
     {
         "id": 1,
@@ -85,6 +89,35 @@ GET /projects HTTP/1.1
     }
 ]
 ```
+
+### Fetch a Project
+
+```.http
+GET /projects/1 HTTP/1.1
+...
+
+
+HTTP/1.1 200 OK
+...
+
+{
+    "id": 1,
+    "name": "test-project"
+}
+```
+
+### Delete a Project
+
+This deletes the project and all the project's builds and results.
+
+```.http
+DELETE /projects/9 HTTP/1.1
+...
+
+
+HTTP/1.1 204 No Content
+```
+
 
 ## Builds
 
