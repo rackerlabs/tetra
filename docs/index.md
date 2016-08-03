@@ -99,6 +99,7 @@ Field          | Type   | Required | Description
 `build_url`    | string | no       | A link for your own usage, like to logs or to a Jenkins job url.
 `region`       | string | no       | The region being tested (e.g. US East, US West, IAD, DFW, ...)
 `environment`  | string | no       | The environment being tested (e.g. preprod, staging, prod)
+`status`       | string | no       | The status of the build (like `passed`, `failed`, `error`, ...)
 
 ### Create a Build
 
@@ -110,7 +111,8 @@ POST /projects/1/builds HTTP/1.1
     "build_url": "http://jenkins.example.com/job/my-unit-tests/22",
     "environment": "preprod",
     "name": "my-unit-tests",
-    "region": "US East"
+    "region": "US East",
+    "status": "passed"
 }
 
 
@@ -124,6 +126,7 @@ HTTP/1.1 201 Created
     "name": "my-unit-tests",
     "project_id": 1,
     "region": "US",
+    "status": "passed",
     "tags": null
 }
 ```
@@ -145,7 +148,8 @@ HTTP/1.1 200 OK
         "id": 1,
         "name": "my-unit-tests",
         "project_id": 1,
-        "region": "US"
+        "region": "US",
+        "status": "passed"
     },
     {
         "build_url": null,
@@ -153,7 +157,8 @@ HTTP/1.1 200 OK
         "id": 2,
         "name": "my-unit-tests",
         "project_id": 1,
-        "region": "US"
+        "region": "US",
+        "status": null
     }
 ]
 ```
@@ -175,6 +180,7 @@ HTTP/1.1 200 OK
     "name": "my-unit-tests",
     "project_id": 1,
     "region": "US"
+    "status": "passed"
 }
 ```
 
