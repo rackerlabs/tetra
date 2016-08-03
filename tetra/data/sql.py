@@ -41,6 +41,7 @@ builds_table = Table(
     Column('build_url', String(256), nullable=True),
     Column('region', String(256), nullable=True),
     Column('environment', String(256), nullable=True),
+    Column('status', String(256), nullable=True),
     Index('build_index', 'project_id', 'id')
 )
 

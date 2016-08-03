@@ -22,12 +22,13 @@ class BaseTetraTest(unittest.TestCase):
         return resp
 
     def _create_build(self, project_id, name=None, build_url=None,
-                      region=None, environment=None):
+                      region=None, environment=None, status=None):
         data = {
             'name': name or "test-build",
             'build_url': build_url or "test-url",
             'region': region or "test-region",
             'environment': environment or "test-env",
+            'status': status,
         }
 
         resp = self.client.create_build(project_id, data)

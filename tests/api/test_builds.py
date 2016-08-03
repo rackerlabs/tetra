@@ -17,7 +17,7 @@ class TestBuilds(BaseBuildsTest):
         super(TestBuilds, self).setUp()
         self.create_resp = self._create_build(
             self.project_id, name='test-build', build_url='test-url',
-            region='test-region', environment='test-env')
+            region='test-region', environment='test-env', status='passed')
         self.build = self.create_resp.json()
 
     def test_list_builds(self):
@@ -36,6 +36,7 @@ class TestBuilds(BaseBuildsTest):
         self.assertEqual(self.build['build_url'], 'test-url')
         self.assertEqual(self.build['region'], 'test-region')
         self.assertEqual(self.build['environment'], 'test-env')
+        self.assertEqual(self.build['status'], 'passed')
 
     def test_delete_build(self):
         resp = self.client.delete_build(self.project_id, self.build['id'])
