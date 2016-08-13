@@ -27,7 +27,7 @@ class Build(BaseModel):
     RESOURCE_TAGS_TABLE = sql.build_tags_table
 
     def __init__(self, project_id, name, id=None, build_url=None, region=None,
-                 environment=None):
+                 environment=None, status=None):
         if id:
             self.id = int(id)
         self.project_id = int(project_id)
@@ -37,6 +37,7 @@ class Build(BaseModel):
         self.region = truncate(region, self.TABLE.c.region.type.length)
         self.environment = truncate(environment,
                                     self.TABLE.c.environment.type.length)
+        self.status = truncate(status, self.TABLE.c.status.type.length)
 
     @classmethod
     def get_all(cls, handler=None, limit=None, offset=None, project_id=None,
