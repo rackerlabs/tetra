@@ -39,6 +39,16 @@ class ProjectClientMixin(BaseClient):
         url = self.url('/projects')
         return requests.post(url, data=json.dumps(data), params=params)
 
+    @log_response
+    def get_project(self, project_id, params=None):
+        url = self.url('/projects', project_id)
+        return requests.get(url, params=params)
+
+    @log_response
+    def delete_project(self, project_id, params=None):
+        url = self.url('/projects', project_id)
+        return requests.delete(url, params=params)
+
 
 class BuildClientMixin(BaseClient):
 
