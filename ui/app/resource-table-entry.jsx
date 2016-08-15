@@ -9,7 +9,7 @@ var ResourceTableEntry = React.createClass({
         var columnLinks = this.props.columnLinks;
         return (
             <tr>
-                <td className="rs-table-status rs-table-status-ok"> </td>
+                { this.status(resource) }
                 { this.columns(resource, columnKeys, columnLinks) }
             </tr>
         );
@@ -47,6 +47,19 @@ var ResourceTableEntry = React.createClass({
             }
         }
         return result;
+    },
+
+    status:  function(resource) {
+        var status = resource["result"] || resource["status"];
+        if (status === "failed" || status === "error") {
+            return <td className="rs-table-status rs-table-status-error"> </td>;
+        } else if (status === "skipped") {
+            return <td className="rs-table-status rs-table-status-warning"> </td>;
+        } else if (status === "passed") {
+            return <td className="rs-table-status rs-table-status-ok"> </td>;
+        } else {
+            return <td className="rs-table-status rs-table-status-disabled"> </td>;
+        }
     },
 
 });
