@@ -81,7 +81,7 @@ class BaseModel(DictSerializer):
         if and_clause is not None:
             query = query.where(and_clause)
 
-        query = query.order_by(cls.TABLE.c.id)
+        query = query.order_by(cls.TABLE.c.id.desc())
 
         return handler.get_all(resource_class=cls, query=query, limit=limit,
                                offset=offset)
