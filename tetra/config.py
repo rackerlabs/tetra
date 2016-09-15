@@ -52,6 +52,7 @@ def _find_config_file(locations):
     raise Exception("Failed to find config at any of these paths: {0}"
                     .format(locations))
 
+
 _CONFIG_FILE = _find_config_file(_LOCATIONS)
 
 cfg.CONF(args=[], default_config_files=[_CONFIG_FILE])

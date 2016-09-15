@@ -67,4 +67,5 @@ class TetraAPI(falcon.API):
         for resource in self.RESOURCES:
             self.add_route(resource.ROUTE, resource)
 
+
 application = TetraAPI()

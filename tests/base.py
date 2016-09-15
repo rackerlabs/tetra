@@ -21,7 +21,7 @@ class BaseTetraTest(unittest.TestCase):
         return resp
 
     def _create_build(self, project_id, name=None, build_url=None,
-                      region=None, environment=None, status=None):
+                      region=None, environment=None, status=None, tags=None):
         data = {
             'name': name or "test-build",
             'build_url': build_url or "test-url",
@@ -29,6 +29,9 @@ class BaseTetraTest(unittest.TestCase):
             'environment': environment or "test-env",
             'status': status,
         }
+
+        if tags is not None:
+            data['tags'] = tags
 
         resp = self.client.create_build(project_id, data)
         self.assertEqual(resp.status_code, 201)
@@ -38,10 +41,10 @@ class BaseTetraTest(unittest.TestCase):
         self.assertEqual(resp.json()['project_id'], project_id)
         return resp
 
-    def _create_result(self, project_id, build_id, test_name, result,
-                       timestamp=None, result_message=None):
+    def _create_result(self, project_id, build_id, test_name=None, result=None,
+                       timestamp=None, result_message=None, tags=None):
         data = self._get_result_data(project_id, build_id, test_name, result,
-                                     timestamp, result_message)
+                                     timestamp, result_message, tags=tags)
         resp = self.client.create_result(project_id, build_id, data)
         self.assertEqual(resp.status_code, 201)
         self.addCleanup(self.client.delete_result, project_id, build_id,
@@ -66,12 +69,13 @@ class BaseTetraTest(unittest.TestCase):
         return resp
 
     def _get_result_data(self, project_id, build_id, test_name, result,
-                         timestamp=None, result_message=None):
+                         timestamp=None, result_message=None, tags=None):
         data = {
-            'test_name': test_name or "name of the test!",
+            'test_name': test_name or "test-result",
             'result': result or random.choice(['passed', 'failed']),
             'timestamp': timestamp,
             'result_message': result_message,
+            'tags': tags,
         }
         # remove all the none values
         return {k: v for k, v in data.items() if v is not None}

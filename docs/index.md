@@ -221,12 +221,12 @@ HTTP/1.1 200 OK
 
 A Result corresponds to an individual test case.
 
-Field          | Type   | Required | Description
--------------- | ------ | -------- | -----------
-`test_name`    | string | yes      | The name of the result. This is typically the name of a test case.
-`result`       | string | yes      | The test case result. This should be one of: `passed`, `failed`, `skipped`, `error`.
-`result_message` | string | no     | Any additional text you would like to store, like test logs or tracebacks.
-`timestamp`    | float | no       | The time the test was run. Defaults to the API server time.
+Field            | Type   | Required | Description
+---------------- | ------ | -------- | -----------
+`test_name`      | string | yes      | The name of the result. This is typically the name of a test case.
+`result`         | string | yes      | The test case result. This should be one of: `passed`, `failed`, `skipped`, `error`.
+`result_message` | string | no       | Any additional text you would like to store, like test logs or tracebacks.
+`timestamp`      | int    | no       | The timestamp test was run (seconds from epoch time). Defaults to the API server time.
 
 ### Create a Result
 

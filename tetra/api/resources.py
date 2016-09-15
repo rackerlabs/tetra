@@ -21,7 +21,6 @@ import xunitparser
 from tetra.data.models.build import Build
 from tetra.data.models.project import Project
 from tetra.data.models.result import Result
-from tetra.data.models.tags import Tag, BuildTag
 
 
 def make_error_body(msg):
@@ -90,27 +89,10 @@ class BuildsResource(Resources):
         data = req.stream.read()
         data_dict = json.loads(data)
         data_dict.update(kwargs)
-        tags_data = None
-        if "tags" in data_dict:
-            tags_data = data_dict.get("tags")
-            del data_dict["tags"]
+
         resource = self.RESOURCE_CLASS.from_dict(data_dict)
         created_resource = self.RESOURCE_CLASS.create(resource=resource)
-
-        if tags_data:
-            build_tags = []
-            for key, value in tags_data.iteritems():
-                existing_tags = Tag.get_all(key=key, value=value)
-                if len(existing_tags) == 0:
-                    tag = Tag.create(Tag(key=key, value=value))
-                    build_tags.append(tag)
-                else:
-                    build_tags.append(Tag.from_dict(existing_tags[0]))
-            for tag in build_tags:
-                BuildTag.create(BuildTag(build_id=resource.id, tag_id=tag.id))
-
         created_dict = created_resource.to_dict()
-        created_dict["tags"] = tags_data
         resp.body = json.dumps(created_dict)
 
 

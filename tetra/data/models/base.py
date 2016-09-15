@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 from tetra.config import cfg
-from tetra.data import sql
 from tetra.data.db_handler import get_handler
 
 
@@ -42,7 +41,6 @@ class BaseModel(DictSerializer):
 
     TABLE = None
     RESOURCE_TAGS_TABLE = None
-    TAGS_TABLE = sql.tags_table
 
     @classmethod
     def create(cls, resource, handler=None):
@@ -71,17 +69,27 @@ class BaseModel(DictSerializer):
         return and_clause
 
     @classmethod
-    def get_all(cls, handler=None, limit=None, offset=None, **kwargs):
-        handler = handler or get_handler()
+    def _get_all_query(cls, and_clause=None, limit=None, offset=None):
         limit = limit or conf.api.default_limit
-
         query = cls.TABLE.select()
-
-        and_clause = cls._and_clause(**kwargs)
         if and_clause is not None:
             query = query.where(and_clause)
 
-        query = query.order_by(cls.TABLE.c.id.desc())
+        if limit is not None:
+            query = query.limit(limit)
+        if offset is not None:
+            query = query.offset(offset)
+
+        return query.order_by(cls.TABLE.c.id.desc())
+
+    @classmethod
+    def get_all(cls, handler=None, limit=None, offset=None, **kwargs):
+        handler = handler or get_handler()
+
+        and_clause = cls._and_clause(**kwargs)
+        query = cls._get_all_query(
+            and_clause=and_clause, limit=limit, offset=offset,
+        )
 
         return handler.get_all(resource_class=cls, query=query, limit=limit,
                                offset=offset)
