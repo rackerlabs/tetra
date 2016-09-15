@@ -97,6 +97,7 @@ class TestResultsPagination(BaseResultTest):
             )
             self.result_ids.append(resp.json()['id'])
 
+        self.result_ids.reverse()
         self.n_results = len(self.result_ids)
 
     def _checkResultsResp(self, resp, n_results):
