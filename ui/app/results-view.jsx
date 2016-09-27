@@ -41,7 +41,7 @@ var ResultsView = React.createClass({
     },
 
     offsetIncrease: function(event) {
-        if(this.state.offset + 25 <= this.state.metadata["total_results"]){
+        if(this.state.offset + 25 < this.state.metadata["total_results"]){
             this.getResults(this.state.offset + 25);
         }
         console.log(this.state.offset)
