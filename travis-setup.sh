@@ -22,17 +22,18 @@ cat <<EOF > tetra-test.conf
 base_url = http://localhost:7374
 EOF
 
-docker --version
-docker-compose --version
+if [ "$TOXENV" = "functional" ]; then
+    docker --version
+    docker-compose --version
 
-make docker-build
+    make docker-build
 
-make docker-db docker-queue
-sleep 5
-make docker-dev
-sleep 5
+    make docker-db docker-queue
+    sleep 5
+    make docker-dev
+    sleep 5
 
-make docker-port || true
+    make docker-port || true
 
-docker-compose -f docker-compose.yml -f development.yml logs
-
+    docker-compose -f docker-compose.yml -f development.yml logs
+fi
