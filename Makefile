@@ -34,7 +34,7 @@ help:
 	@echo '  docker-postgres-shell      - start the postgres shell in your container'
 
 start:
-	gunicorn --reload -t 120 --bind 127.0.0.1:7374 tetra.app:application
+	gunicorn --reload -t 120 --bind 127.0.0.1:7374 --access-logfile - tetra.app:application
 
 test:
 	py.test -v ./tests
