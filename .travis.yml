@@ -1,9 +1,7 @@
+sudo: required
+
 services:
-    - postgresql
-    # rabbitmq needs sudo in travis, but sudo makes travis checks take forever.
-    # instead, run celery on redis since it doesn't need sudo. hopefully this
-    # will work fine, but it may become an issue since we want to use rabbitmq
-    - redis-server
+    - docker
 
 language: python
 python:

@@ -4,7 +4,7 @@ set -x
 cat <<EOF > tetra.conf
 [sqlalchemy]
 engine = postgres
-host = 127.0.0.1
+host = tetra-db
 port = 5432
 username = postgres
 password = password
@@ -14,7 +14,7 @@ database = tetra-db
 default_limit = 25
 
 [queue]
-broker_url = redis://localhost:6379/0
+broker_url = amqp://tetra:password@tetra-queue:5672//
 EOF
 
 cat <<EOF > tetra-test.conf
@@ -22,12 +22,17 @@ cat <<EOF > tetra-test.conf
 base_url = http://localhost:7374
 EOF
 
-psql -c 'create database "tetra-db";' -U postgres
-pip install -r requirements.txt
-# required to use redis with celery
-pip install -U celery[redis]
+docker --version
+docker-compose --version
 
-# the effect of this is we see our print statements printed immediately
-export PYTHONUNBUFFERED=1
-gunicorn --daemon -t 120 --bind 127.0.0.1:7374 tetra.app:application
-celery --detach --app=tetra.worker.app worker --loglevel=INFO
+make docker-build
+
+make docker-db docker-queue
+sleep 5
+make docker-dev
+sleep 5
+
+make docker-port || true
+
+docker-compose -f docker-compose.yml -f development.yml logs
+
