@@ -9,7 +9,8 @@ def rand_duration():
 
 
 def rand_string(prefix, size=40):
-    text = "".join([random.choice(string.ascii_letters + ' ') for _ in range(size)])
+    text = "".join(
+        [random.choice(string.ascii_letters + ' ') for _ in range(size)])
     return "{} {}".format(prefix, text)
 
 
