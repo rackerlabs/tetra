@@ -27,7 +27,8 @@ services:
     image: postgres:9.5
     container_name: tetra-db
     ports:
-      - "5432:5432"
+      # note: exposing port 5432 here causes issues in travis builds
+      - "5432"
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: tetra-db

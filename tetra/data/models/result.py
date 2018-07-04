@@ -30,7 +30,7 @@ class Result(BaseModel):
     TABLE = sql.results_table
 
     def __init__(self, test_name, result, project_id, build_id, id=None,
-                 timestamp=None,  result_message=None):
+                 timestamp=None,  result_message=None, tags=None):
         if id:
             self.id = int(id)
 
@@ -38,9 +38,10 @@ class Result(BaseModel):
                                   self.TABLE.c.test_name.type.length)
         self.project_id = int(project_id)
         self.build_id = int(build_id)
-        self.timestamp = timestamp or time.time()
+        self.timestamp = int(timestamp or time.time())
         self.result = truncate(result, self.TABLE.c.result.type.length)
         self.result_message = result_message
+        self.tags = tags or {}
 
     @classmethod
     def from_junit_xml_test_case(cls, case, project_id, build_id):
@@ -64,12 +65,25 @@ class Result(BaseModel):
         )
 
     @classmethod
-    def get_all(cls, handler=None, limit=None, offset=None, **kwargs):
+    def get_all(cls, handler=None, limit=None, offset=None, project_id=None,
+                test_name=None, build_id=None, timestamp=None, result=None,
+                result_message=None, **tag_filters):
         handler = handler or get_handler()
-        results = super(cls, Result).get_all(handler=handler, limit=limit,
-                                             offset=offset, **kwargs)
+        and_clause = cls._and_clause(
+            project_id=project_id, test_name=test_name, build_id=build_id,
+            timestamp=timestamp, result=result,
+            result_message=result_message,
+        )
 
-        metadata = cls._get_results_metadata(handler, **kwargs)
+        if tag_filters:
+            and_clause &= cls.TABLE.c.tags.contains(tag_filters)
+
+        query = cls._get_all_query(and_clause, limit=limit, offset=offset)
+        results = handler.get_all(resource_class=cls, query=query)
+
+        # This `and_clause` should not have the limit/offset included. We want
+        # to run stats on the whole result, not just the first page.
+        metadata = cls._get_results_metadata(and_clause, handler=handler)
 
         results_dict = {
             "results": results,
@@ -131,12 +145,12 @@ class Result(BaseModel):
         return results_dict
 
     @classmethod
-    def _get_results_metadata(cls, handler=None, **kwargs):
+    def _get_results_metadata(cls, and_clause, handler=None):
         handler = handler or get_handler()
 
         query = select(
             [cls.TABLE.c.result, func.count(cls.TABLE.c.result).label("count")]
-        ).where(cls._and_clause(**kwargs)).group_by(cls.TABLE.c.result)
+        ).where(and_clause).group_by(cls.TABLE.c.result)
         count_results = handler.get_all(resource_class=Result, query=query)
 
         return ResultMetadata.from_database_counts(count_results)

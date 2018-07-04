@@ -1,7 +1,7 @@
 FROM python:2.7
 
 WORKDIR /tetra/
-ADD requirements.txt /tetra/requirements.txt
-RUN pip install -r requirements.txt
 ADD . /tetra
+RUN pip install .
+RUN pip install gunicorn
 RUN adduser --disabled-password --gecos '' tetra-worker

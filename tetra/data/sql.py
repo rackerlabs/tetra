@@ -13,12 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from sqlalchemy import (Table, Column, MetaData, ForeignKey, Index,
-                        UniqueConstraint)
-from sqlalchemy import Integer, String, Text
+from sqlalchemy import (
+    Table, Column, MetaData, ForeignKey, Index, Integer, String, Text
+)
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
+
+# plain JSON is inferior to JSONB in postgres.
+# JSONB supports indexing and is stored as binary.
+# TODO: other database support?
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 metadata = MetaData()
@@ -42,7 +47,9 @@ builds_table = Table(
     Column('region', String(256), nullable=True),
     Column('environment', String(256), nullable=True),
     Column('status', String(256), nullable=True),
-    Index('build_index', 'project_id', 'id')
+    Column('tags', JSONB, nullable=False),
+    Index('build_index', 'project_id', 'id'),
+    Index('build_tags_index', 'tags', postgresql_using='gin'),
 )
 
 results_table = Table(
@@ -57,32 +64,9 @@ results_table = Table(
     Column('timestamp', Integer, nullable=False),
     Column('result', String(256), nullable=False),
     Column('result_message', Text, nullable=True),
-    Index('result_index', 'project_id', 'build_id', 'result')
-)
-
-build_tags_table = Table(
-    'build_tags', metadata,
-    Column('id', Integer, nullable=False, primary_key=True,
-           autoincrement=True),
-    Column('build_id', Integer, nullable=False),
-    Column('tag_id', Integer, nullable=False),
-)
-
-result_tags_table = Table(
-    'result_tags', metadata,
-    Column('id', Integer, nullable=False, primary_key=True,
-           autoincrement=True),
-    Column('result_id', Integer, nullable=False),
-    Column('tag_id', Integer, nullable=False),
-)
-
-tags_table = Table(
-    'tags', metadata,
-    Column('id', Integer, nullable=False, primary_key=True,
-           autoincrement=True),
-    Column('key', Text, nullable=False),
-    Column('value', Text, nullable=False),
-    UniqueConstraint('key', 'value')
+    Column('tags', JSONB, nullable=False),
+    Index('result_index', 'project_id', 'build_id', 'result'),
+    Index('result_tags_index', 'tags', postgresql_using='gin'),
 )
 
 
