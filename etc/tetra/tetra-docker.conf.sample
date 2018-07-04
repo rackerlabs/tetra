@@ -1,6 +1,6 @@
 [sqlalchemy]
 engine = postgres
-host = localhost
+host = tetra-db
 port = 5432
 username = postgres
 password = password
@@ -10,4 +10,4 @@ database = tetra-db
 default_limit = 25
 
 [queue]
-broker_url = amqp://tetra:password@localhost:5672//
+broker_url = amqp://tetra:password@tetra-queue:5672//

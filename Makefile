@@ -67,15 +67,6 @@ docker-queue:
 docker-logs:
 	docker-compose -f docker-compose.yml -f development.yml logs -f
 
-docker-ps:
-	docker ps
-
-docker-stop:
-	docker-compose stop
-
-docker-down:
-	docker-compose down
-
 docker-port:
 	@echo API=$(shell docker port $(DOCKER_TAG) 7374)
 	@echo DB=$(shell docker port $(DOCKER_DB_TAG) 5432)
